@@ -1,0 +1,37 @@
+# Fields with one entry per regression
+
+name: art_reg
+
+descr: |
+  Information about extracted coefficients and standard errors from regression tables.
+unique_index:
+  main_index: [artid, regid]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  regid:
+    descr: |
+      Unique ID of the regression in the article.
+    type: int
+
+  tabid:
+    descr: |
+      Unique identifier of the table in article.
+      Multiple tpid can match to the same tabid.
+
+  panel_num:
+    descr: |
+      Unique identifier of the table panel in article.
+    type: int
+
+  regcol:
+    descr: |
+      The column the regression is found in the table panel.
+      We count only columns that contain regressions.
+
+  ncoef:
+    descr: |
+      The number of shown regression coefficients.
+    type: int

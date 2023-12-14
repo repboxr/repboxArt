@@ -1,0 +1,37 @@
+# Fields with one entry per regression
+
+name: art_regstat
+
+descr: |
+  Information about extracted coefficients and standard errors from regression tables.
+unique_index:
+  main_index: [artid, regid, stat_name]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  regid:
+    descr: |
+      Unique ID of the regression in the article.
+    type: int
+
+  cellid:
+    type: int
+
+  stat_name:
+    descr: |
+      Currently "nobs" and "r2"
+
+  num:
+    type: num
+
+  num_deci:
+    type: int
+
+  # # Allow to link back to art_tab_cell
+  # row:
+  #   type: int
+  #
+  # col:
+  #   type: int

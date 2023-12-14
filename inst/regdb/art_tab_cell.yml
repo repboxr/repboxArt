@@ -1,0 +1,56 @@
+# Fields with one entry per regression
+
+name: art_tab_cell
+
+descr: |
+  General information about a cell in an extracted table in an article.
+
+index:
+  main_index: [artid, tabid]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  tabid:
+    descr: |
+      Number of the table as in the article, e.g. a "4" for "Table 4" or an "A1" for Table "A1".
+
+  cellid:
+    descr: Unique identifier for all cells of an article.
+    type: int
+
+  row:
+    type: int
+
+  col:
+    type: int
+
+  colspan:
+    type: int
+
+  type:
+
+  text:
+
+  num_str:
+
+  num:
+    type: num
+
+  num_deci:
+    type: int
+
+  stars_str:
+
+  paren_type:
+    descr: |
+      Type of parenthesis around number
+      "" is default no parenthesis, otherwise
+      "(","[" or "{"
+
+  panel_num:
+    type: int
+
+  num_row_block:
+    type: int

@@ -1,0 +1,18 @@
+# Fields with one entry per regression
+
+name: art_tab_source
+
+descr: |
+  Source text for an article table. Plain text if it was generated
+  from a PDF file and HTML if the table was extracted from HTML.
+
+unique_index:
+  main_index: [artid, tabid]
+
+fields:
+  artid:
+
+  tabid:
+
+  tabsource:
+

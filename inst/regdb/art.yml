@@ -1,0 +1,57 @@
+# Fields with one entry per regression
+
+name: art
+
+descr: |
+  General information about an article.
+
+unique_index:
+  main_index: [artid]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  version_repbox_art:
+    descr: Version of repboxArt specification
+
+  title:
+
+  journ:
+
+  vol:
+
+  issue:
+
+  year:
+
+  date:
+
+  pdf_url:
+
+  html_url:
+
+  article_url:
+
+  article_doi:
+
+  data_url:
+
+  data_doi:
+
+  data_repo:
+    descr: Abbreviation for the repo of the replication package.
+    val_descr:
+      oi: OpenICPSR
+      dv: Dataverse
+      ze: Zenodo
+
+
+  appendix_pdf_url:
+
+  authors:
+
+  num_authors:
+
+  abstract:
+

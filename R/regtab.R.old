@@ -1,0 +1,233 @@
+example = function() {
+  project.dir = "~/repbox/projects_reg/aejpol_3_4_8"
+  tab_df = art_load_tabs(project.dir)
+  tab_df = add_reg_info_to_tab_df(tab_df)
+  reg_df = tab_df_to_reg_df(tab_df)
+  art_reg_save_regdb(project.dir, reg_df)
+  #reg_df = tab_df$coef_df[[7]]
+}
+
+art_make_reg_tabs = function(project.dir, overwrite=FALSE) {
+  if (!overwrite) {
+    if (file.exists(file.path(project.dir, "art","regdb","art_reg.Rds"))) {
+      return()
+    }
+  }
+  restore.point("art_make_reg_tabs")
+  tab_df = art_load_tabs(project.dir)
+  if (NROW(tab_df)==0) return()
+  tab_df = add_reg_info_to_tab_df(tab_df)
+  reg_df = tab_df_to_reg_df(tab_df)
+  if (NROW(reg_df)==0) return()
+  art_reg_save_regdb(project.dir, reg_df)
+}
+
+art_reg_save_regdb = function(project.dir, reg_df) {
+  restore.point("art_reg_save_regdb")
+  library(repboxDB)
+  specs = regdb_load_specs(libs="repboxArt")
+
+  parcels = list()
+  artid = basename(project.dir)
+  reg_df$artid = artid
+
+
+  regdb_check_data(reg_df,"art_reg")
+  parcels$art_reg = list(art_reg=reg_df)
+
+  co = bind_rows_with_parent_fields(reg_df, "ct",c("tpid","artid","regid")) %>%
+    rename(coef_pos = row, coef = art_coef, par = art_par) %>%
+    mutate(stars_str = coalesce(find_star_str(coef_big_str),find_star_str(par_big_str) %>% na.val(""))
+    )
+
+  regdb_check_data(co,"art_regcoef")
+
+  parcels$art_reg$art_regcoef = co
+
+  dir = file.path(project.dir, "art","regdb")
+  regdb_save_parcels(parcels, dir)
+
+  #rstudioapi::filesPaneNavigate(file.path(project.dir, "art","regdb"))
+
+  invisible(parcels)
+}
+
+add_reg_info_to_tab_df = function(tab_df) {
+  restore.point("add_reg_info_to_tab_df")
+
+  tab_df$coef_df = vector("list", NROW(tab_df))
+  tab_df$reg_extra_def = vector("list", NROW(tab_df))
+  tab_df$has_reg_df = FALSE
+
+  i = 1
+  for (i in seq_len(NROW(tab_df))) {
+    loc_df = tab_df$loc_df[[i]]
+    coef_df = sci_loc_df_to_reg_coef_df(loc_df)
+    tab_df$coef_df[i] = list(coef_df)
+    has_reg = !is.null(coef_df)
+    tab_df$has_reg_df[i] = has_reg
+    if (has_reg) {
+      extra_df = sci_loc_df_to_reg_extras(loc_df, coef_df)
+      tab_df$reg_extra_def[i] = list(extra_df)
+    }
+  }
+
+  return(tab_df)
+}
+
+
+tab_df_to_reg_df = function(tab_df) {
+  restore.point("tab_df_to_reg_df")
+  # In reg_df one line will correspond to one regression
+  coef_df = bind_rows(tab_df$coef_df)
+
+  if (NROW(coef_df)==0) return(NULL)
+
+  regs = coef_df %>%
+    select(tpid, col) %>%
+    unique() %>%
+    arrange(tpid, col) %>%
+    group_by(tpid) %>%
+    mutate(
+      reg_col = seq_len(n())
+    ) %>%
+    ungroup() %>%
+    mutate(
+      regid = seq_len(n())
+    )
+
+  reg_df = left_join(coef_df, regs, by=c("tpid","col")) %>%
+    tidyr::nest(ct = row:xlabel)
+
+  extra_df = bind_rows(tab_df$reg_extra_def)
+
+  obs.df = extra_df %>%
+    filter(extra_type == "obs") %>%
+    select(tpid, col, obs = num_val)
+
+  nest.extra_df = extra_df %>%
+    tidyr::nest(extras = -c(tpid, col))
+
+  reg_df = left_join(reg_df, select(tab_df, tabid, tpid, tab_num, tab_title, panel, tab_name, tp_name), by="tpid") %>%
+    left_join(obs.df, by=c("tpid", "col")) %>%
+    left_join(nest.extra_df, by=c("tpid","col"))
+
+  reg_df = reg_df %>%
+    rename(regcol = col, num_obs = obs) %>%
+    mutate(
+      num_coefs = sapply(ct, NROW)
+    )
+
+
+  cols = c("tpid","regid","reg_col","panel","num_obs","ct","extras")
+  cols = c(cols, setdiff(colnames(reg_df), cols))
+  reg_df = reg_df[,cols]
+
+
+}
+
+
+
+sci_loc_df_to_reg_extras = function(loc_df, coef_df) {
+  restore.point("sci_loc_df_to_reg_extras")
+  colnames(loc_df) = gsub(".","_", colnames(loc_df), fixed=TRUE)
+
+  name.df = filter(loc_df, type=="rowname")
+
+  extra_df = filter(loc_df, type=="extra") %>%
+    mutate(str = trimws(str)) %>%
+    left_join(transmute(name.df, label=trimws(str),line=line), by="line") %>%
+    select(tpid, col,line, label, str, num_str, num_val)
+
+  if (NROW(extra_df)==0) return(NULL)
+
+  extra_df = extra_df %>%
+    arrange(line, col) %>%
+    group_by(col) %>%
+    mutate(extra_row = seq_len(n())) %>%
+    ungroup()
+
+  str = tolower(extra_df$str)
+  is.obs = startsWith(str,"observation") | startsWith(str,"number of observation") | str=="n" | str=="obs" | str=="obs." | startsWith(str,"no. obs")
+
+  extra_df$extra_type = rep("unknown",NROW(extra_df))
+  extra_df$extra_type[is.obs] = "obs"
+
+  return(extra_df)
+}
+
+sci_loc_df_to_reg_coef_df = function(loc_df) {
+  restore.point("sci.log.df.to.reg_df")
+
+  colnames(loc_df) = gsub(".","_", colnames(loc_df), fixed=TRUE)
+
+  # 1. Assume se are in parentheses below coefficients
+  num_loc_df = loc_df %>%
+    filter(type=="num") %>%
+    mutate(
+      num_deci = nchar(str.right.of(num_str,".", not.found="")),
+      any_paren = (has_paren | has_bracket | has_curley)
+    ) %>%
+    group_by(col) %>%
+    arrange(line) %>%
+    mutate(
+      reg_paren = na.false(any_paren &
+                             (lag(line) == line-1) & !lag(any_paren)),
+      reg_coefs = na.false(!any_paren & lead(reg_paren)),
+      oline = ifelse(reg_paren, line-1, line)
+    ) %>%
+    ungroup()
+
+  if (!any(num_loc_df$any_paren)) {
+    return(NULL)
+  }
+
+  if (any(num_loc_df$reg_coefs)) {
+    reg_df = loc_df_to_reg_df_se_below(num_loc_df,loc_df=loc_df)
+    return(reg_df)
+  }
+
+  # 2. Assume se are in parentheses in column to right
+  num_loc_df = loc_df %>%
+    filter(type=="num") %>%
+    mutate(
+      num_deci = nchar(str.right.of(num_str,".", not.found="")),
+      any_paren = (has_paren | has_bracket | has_curley)
+    ) %>%
+    group_by(line) %>%
+    arrange(col) %>%
+    mutate(
+      reg_paren = na.false(any_paren & (lag(col) == col-1) & !lag(any_paren)),
+      reg_coefs = na.false(!any_paren & lead(reg_paren)),
+      ocol = ifelse(reg_paren, col-1, col)
+    ) %>%
+    ungroup()
+
+  if (!any(num_loc_df$reg_coefs)) return(NULL)
+  cat("\nNeed to implement se in column next to coef, to extract regression tables here.")
+  return(NULL)
+}
+
+
+
+loc_df_to_reg_df_se_below = function(num_loc_df = filter(loc_df, type=="num"),name.df = filter(loc_df, type=="rowname"), loc_df=NULL) {
+  restore.point("loc_df_to_reg_df_se_below")
+
+  coef_df = filter(num_loc_df, reg_coefs==TRUE) %>%
+    select(tpid, col, art_coef=num_val, coef_line = line, coef_big_str = big_str, coef_num_str = num_str, coef_deci = num_deci)
+
+  par.df = filter(num_loc_df, reg_paren==TRUE) %>%
+    select(tpid, col,art_par=num_val, coef_line = oline, par_line=line, par_big_str = big_str, par_num_str = num_str, par_deci = num_deci)
+
+  reg_df = left_join(coef_df, par.df, by=c("tpid","col","coef_line"))
+
+  reg_df = left_join(reg_df, transmute(name.df, xlabel1=trimws(str), coef_line=line), by="coef_line")
+  reg_df = left_join(reg_df, transmute(name.df, xlabel2=trimws(str), par_line=line), by="par_line")
+  reg_df$xlabel = trimws(paste0(reg_df$xlabel1," ", reg_df$xlabel2))
+
+  lines = sort(unique(reg_df$coef_line))
+  reg_df$row = match(reg_df$coef_line, lines)
+
+  reg_df = select(reg_df, tpid, col, row, art_coef, art_par, everything())
+  reg_df
+}

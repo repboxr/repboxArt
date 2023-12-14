@@ -1,0 +1,70 @@
+name: ind_tab_type
+
+descr: |
+  Indicators for particular types of a table in an article.
+  In principle, a table can be of multiple types,
+  e.g showing regression results but also
+  some descriptive statistics.
+
+unique_index:
+  main_index: [artid, tabid]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  tabid:
+
+  tab_type:
+    descr: A classification of table types
+    val_descr:
+      descr: A table showing descriptive statistics
+      balance: A balancing table / table showing randomization tests
+      test: Shows results of some sort of tests (default regression stars ommited).
+      reg: A table showing regressions
+      first_stage: Shows results of a first stage IV regression
+      marginal_effects: Shows some marginal effects
+      simulation: Shows results of some simulation / counterfactual
+      probit: Showing probit regressions
+      logit: Showing logit regressions
+
+
+#  ind_category:
+#    descr: Broad category of the the indicator
+#    val_descr:
+#      keyword: Keyword / key phrase from the table title
+#      llm: Assessment by a LLM like GPT4
+#      format: Guessed from the format of the table
+
+  ind_type:
+    descr: Type of the the indicator as explained below
+    val_descr:
+      keyword_title: Keyword / key phrase from the table title
+      keyword_note: Keyword from the table note
+      keyword_table: Keyword in the table itself
+      keyword_ref: |
+        Key word close to a reference to the table in the text. Here ind_val=1/(1+dist) where
+        dist is the distance in sentences.
+      llm_gpt4: Assessment by a LLM, here gpt4.
+      format_coef_se:
+      signif_stars: Significance stars in table
+      code: Deduced from the Code
+
+  ind_keyword:
+    descr: Mainly for keyword indicator.
+
+  phrase:
+    descr: The exact matched phrase, may differ from ind_keyword
+
+  ind_val:
+    descr: |
+      A negative or positive numeric value.
+      Will be typically be
+      1 for an indicator for that table type
+      and -1 for an indicator against that table type.
+    type: num
+
+  ind_counts:
+    descr: |
+      How often do we have exactly the same indicator
+    type: int

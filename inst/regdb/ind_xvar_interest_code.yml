@@ -1,0 +1,32 @@
+name: ind_xvar_interest_code
+
+descr: |
+  Indicators for the main explanatory variable of interest in a regression
+
+index:
+  main_index: [artid, step]
+
+fields:
+  artid:
+
+  # Links regression in supplement
+  step:
+
+  # Canonical term of the variable
+  cterm:
+
+  ind_type:
+    descr: Type of the the indicator as explained below
+    val_descr:
+      is_first: The variable is the first explanatory variable in the regression formula.
+      is_endo: The variable is an endogeneous variable in an IV regression.
+      is_interaction: |
+        The variable seems to be an interaction effect. In some instances that may be good indicator,
+        e.g. in a DID regression.
+      is_only_interaction: |
+        The variable is indeed the only variable that can be shown to be an interaction effect.
+        It is less common to control for interaction effects, so this might be an
+        indicator to be the variable of interest.
+
+  ind_val:
+    type: num

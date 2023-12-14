@@ -1,0 +1,17 @@
+# Fields with one entry per regression
+
+name: art_tab_note_paren_type
+
+descr: |
+  Stores information extracted from table notes about the value shown in parentheses (se, t or p)
+  We search for substrings like "standard errors in parentheses".
+
+unique_index:
+  main_index: [tabid]
+
+fields:
+  tabid:
+
+  paren_type:
+    descr: |
+      "se","t", "p" or NA

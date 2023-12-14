@@ -1,0 +1,45 @@
+# Fields with one entry per regression
+
+name: art_tab
+
+descr: |
+  General information about an extracted table in an article.
+
+unique_index:
+  main_index: [artid, areg_num]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  tabid:
+    descr: |
+      Number of the table as in the article, e.g. a "4" for "Table 4" or an "A1" for Table "A1".
+
+  tabpos:
+    descr: |
+      The position of the table in the article. When generating HTML files,
+      we will use tabpos instead of tabid as index, because an integer
+      is more reliable and smaller.
+    type: int
+
+  tabtitle:
+    descr: |
+      Like "Table 4 — Multivariate Dprobit Regression of Tax Refund Savings Intent on Demographic"
+
+  num_panels:
+    descr: |
+      Number of panels for this table.
+
+  pdf_file:
+    descr: PDF file where the panel can be found. Empty if only parsed from HTML.
+
+  html_file:
+    descr: HTML file where the panel can be found. Empty if only parsed from PDF.
+
+  url_org_tab:
+    descr: |
+      URL for original version of the table. If the table is extracted from
+      a PDF, we try to link directly to the page on which the tab is shown.
+      In an HTML file we try to directly link to the table if possible (depends
+      on whether the HTML page has a proper ID for the table).

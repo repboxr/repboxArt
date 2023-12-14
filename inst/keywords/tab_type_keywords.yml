@@ -1,0 +1,111 @@
+# Here we specify keywords for different table types
+
+# Tables showing descriptive statistics
+descr:
+  ref_max_dist: 0
+  all:
+    .self: ["descriptive","summary","share of ","percentage of","summary statistics", "descriptive statistcs"]
+  table:
+    .self: [" Min ","Mean "," Max "," SD ", " Median "]
+
+simulation:
+  ref_max_dist: 0
+  all:
+    simulation: ["simulation","simulate"]
+    .self: ["counterfactual"]
+
+# Keywords for tab type reg
+reg:
+  all:
+    "regression": ["regress"]
+    "depvar": [" dependent variable"]
+    "estimate": ["estimation","estimate","estimating"]
+    "fixed effects": ["fixed effects","fixed-effects", " FE "]
+    rdd:  [" RD ","RDD","regression discontinuity"]
+    did: ["difference-in-difference"," DID ","DiD"," DD ",
+      "difference in difference","differences-in-difference"]
+    "iv": ["IV", "instrumental variable"," instrument"]
+    "tsls": ["two-stage least squares","2SLS","TSLS"]
+    se_parentheses: ["tandard errors in parentheses"]
+    .self: ["OLS","poisson","probit","logit","Cloglog",]
+  not_title:
+    "clustered": ["clustered","cluster-robust","cluster robust"]
+    "r2": ["r-squared","r squared"]
+
+falsification:
+  ref_max_dist: 0
+  all:
+    "falsification": ["falsification check","falsification test"]
+
+placebo:
+  ref_max_dist: 0
+  all:
+    "placebo": ["placebo"]
+
+
+robustness:
+  ref_max_dist: 0
+  all:
+    "robustness": ["robustness"]
+
+main_results:
+  ref_max_dist: 0
+  all:
+    "main results": ["main result"]
+
+
+
+# We search for keywords related to causal effect estimation only
+# directly within the
+causal:
+  ref_max_dist: 0
+  all:
+    causal: ["causal"]
+    effect: ["effect"]
+
+
+rubin:
+  all:
+    ATE: [" ATE ","average treatment effect"]
+    LATE: [" LATE ", "local average treatment effect"]
+    ATT: [" ATT ", "treatment effect on the treated"]
+    CATE: [" CATE ", "conditional average treatment effect"]
+
+rdd:
+  all:
+    rdd:  ["RD","RDD","regression discontinuity", "regression discontinuities"]
+    bandwith: ["bandwith", "window size"]
+    "window size": ["window size"]
+    threshold: ["threshold"]
+    "local polynom": ["local polynomial","local polynom"]
+    "polynom": ["third-order polynom","second-order polynom", "polynomial terms"]
+
+synthetic_control:
+  all:
+    "synthetic control": ["synthetic control"]
+
+did:
+  all:
+    did: ["difference-in-difference"," DID ","DiD"," DD ",
+      "difference in difference","differences-in-difference"]
+
+ddd:
+  all:
+    ddd: ["DDD", "triple difference","triple-differences", "tripple DID","tripple-DID"]
+
+iv:
+  all:
+    "iv": ["IV", "instrumental variable"," instrument"]
+    "tsls": ["two-stage least squares","2SLS","TSLS"]
+
+first_stage:
+  all:
+    "first stage": ["first stage"]
+
+control_function:
+  all:
+    "control_function": ["control function"]
+
+marginal_effects:
+  all:
+    .self: ["dx/dy","marginal effect"]

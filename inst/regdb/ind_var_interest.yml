@@ -1,0 +1,44 @@
+name: ind_xvar_interest_art
+
+descr: |
+  Indicators for the main explanatory variable of interest in a regression
+
+unique_index:
+  main_index: [artid, tabid]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  # Link to article table
+  tabid:
+
+  regcol:
+
+  # Variable label in regression table
+  xlabel:
+
+  # Link to supplement result
+  step:
+
+  # Canonical term of the variable
+  cterm:
+
+  ind_type:
+    descr: Type of the the indicator as explained below
+    val_descr:
+      is_first: The variable is the first explanatory variable in a regression
+
+
+  ind_keyword:
+    descr: Mainly for keyword indicator.
+
+  ind_val:
+    descr: |
+      A numeric value for the indicator between [-1 and 1]
+      Will be typically be
+      1 for an indicator for that table type
+      and -1 for an indicator against that table type.
+      Maybe there will be good reasons for numbers inbetween,
+      however.
+

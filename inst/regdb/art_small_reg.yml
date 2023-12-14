@@ -1,0 +1,30 @@
+# Fields with one entry per regression
+
+name: art_small_reg
+
+descr: |
+  A small regression consists only of a single coefficient row of an original big regression.
+  We sometimes don't know whether a regression table with multiple rows shows
+  a single regression with control variables or multiple regressions. Small reg correspond
+  to that later case.
+unique_index:
+  main_index: [artid, regid]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  regid:
+    descr: |
+      Unique ID of the small regression
+    type: int
+
+  big_regid:
+    type: int
+    descr: |
+      regid of the correspondingly parsed big regression
+
+  coef_pos:
+    descr: |
+      The row of the shown regression coefficients.
+    type: int

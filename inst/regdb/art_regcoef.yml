@@ -1,0 +1,89 @@
+# Fields with one entry per regression
+
+name: art_regcoef
+
+descr: |
+  Information about extracted coefficients and standard errors from regression tables.
+unique_index:
+  main_index: [artid, regid, coef_pos]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  regid:
+    descr: |
+      Number of the regression in the article.
+    type: int
+
+  coef_pos:
+    descr: |
+      Position of the shown coefficient.
+    type: int
+
+  label:
+    descr: |
+      The label before the coefficient. We refer to it as xlabel
+      as it typically refers to the explanatory variable.
+
+  coef:
+    descr: |
+      Numerical value of the coefficient. The art_ is used to better match
+      with coefficients from supplements.
+    type: num
+
+  paren:
+    descr: |
+      Numerical value of the value in (parenthesis). Typically the standard error,
+      but could also be something different.
+    type: num
+
+  coef_num_str:
+    descr: |
+      The coefficient as string. Compared to art_coef this allows us to
+      verifiy the exact number of shown digits.
+
+  paren_num_str:
+    descr: |
+      The number shown in parentheses as string. Compared to art_coef this allows us to
+      verifiy the exact number of shown digits.
+
+  coef_str:
+    descr: |
+      The complete string in the coefficient cell. Can include significance stars.
+
+  paren_str:
+    descr: |
+      The complete string in the parenthesis cell. Includes () and may include significance stars.
+
+  stars_str:
+    descr: |
+      Significance stars string.
+
+  coef_num_deci:
+    descr: Number of decimal digits shown for coef
+    type: int
+
+  paren_num_deci:
+    descr: Number of decimal digits shown for number in parenthesis
+    type: int
+
+  coef_cellid:
+    type: int
+
+  paren_cellid:
+    type: int
+
+  # # The following fields allow to map back to art_tab_cell
+  # coef_cell_row:
+  #   type: int
+  #
+  # coef_cell_col:
+  #   type: int
+  #
+  # paren_cell_row:
+  #   type: int
+  #
+  # paren_cell_col:
+  #   type: int
+  #

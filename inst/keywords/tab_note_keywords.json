@@ -1,0 +1,69 @@
+{
+"reg": ["regression","estimation","fixed-effect","fixed effect","OLS"],
+"descr" ["descriptive","summary"],
+
+
+"descriptive": ["decriptive"],
+"balance": ["balance","balancing"],
+"randomization": ["randomization"],
+
+"permutation test": ["permutation test"],
+"placebo test": ["placebo test"],
+
+
+"IV": ["IV", "instrumental variable"," instrument "],
+"weak instrument": ["weak instrument"],
+"panel data": ["panel data"],
+"fixed effect": ["fixed-effect","fixed effect"],
+"random effect": ["random effect"],
+
+
+"field experiment": ["field experiment"],
+"natural experiment": ["natural experiment"],
+"lab experiment": ["laboratory experiment","laboratory study","lab experiment","experimental laboratory"],
+"RCT": ["RCT","randomized controlled trial"],
+
+"multiple testing": ["multiple testing"],
+"potential outcome": ["potential outcome"],
+"SUTVA": ["SUTVA"],
+"LATE": [" LATE","local average treatment effect"],
+"ATE": [" ATE","average treatment effect"],
+"ATT": [" ATT"],
+
+"RDD": ["regression discontinuity","RDD"],
+"DID": ["difference-in-difference","DID","DiD","DD","difference in difference","differences-in-difference"],
+
+"probit": ["probit"],
+"logit": ["logit"],
+"multinomial": ["multinomial"],
+"conditional logit": ["conditional logit"],
+"BLP": ["BLP"],
+
+"elasticity": ["elasticity"],
+
+"nonparametric": ["nonparametric","non-parametric"],
+
+"lasso": ["lasso"],
+"random forest": ["random forest"],
+"cross validation": ["cross validation"],
+"Bayesian": ["bayesian"],
+
+"machine learning": "machine learning",
+"equilibrium": "equilibrium",
+"credible interval": ["credible interval"],
+"posterior": ["posterior distribution"],
+
+
+"MLE": ["MLE","maximum likelihood"],
+"GMM": ["GMM","generalized method of moments"],
+"DSGE": ["DSGE"],
+"VAR": ["VAR"],
+"SVAR": ["SVAR"],
+"GARCH": ["GARCH"],
+"synthetic control": ["synthetic control"],
+"bootstrap": ["bootstrap"],
+"time series": ["time series"],
+"ARIMA": ["ARIMA"],
+"ARMA": ["ARMA"],
+"cointegration": ["cointegrat","co-integrat"]
+}

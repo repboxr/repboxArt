@@ -1,0 +1,59 @@
+name: ind_col_type
+
+descr: |
+  Indicators for types of columns in an article table.
+
+unique_index:
+  main_index: [artid, tabid, col]
+
+fields:
+  artid:
+    descr: ID of the article that is analyzed.
+
+  tabid:
+
+  col:
+    type: num
+
+  tab_type:
+    descr: A classification of table types
+    val_descr:
+      descr: A table showing descriptive statistics
+      balance: A balancing table / table showing randomization tests
+      test: Shows results of some sort of tests (default regression stars ommited).
+      reg: A table showing regressions
+      first_stage: Shows results of a first stage IV regression
+      marginal_effects: Shows some marginal effects
+      simulation: Shows results of some simulation / counterfactual
+      probit: Showing probit regressions
+      logit: Showing logit regressions
+
+  ind_type:
+    descr: Type of the the indicator as explained below
+    val_descr:
+      keyword_title: Keyword / key phrase from the table title
+      keyword_note: Keyword from the table note
+      keyword_table: Keyword in the table itself
+      keyword_text: Keyword from the main article text that is linked to the table.
+      llm_gpt4: Assessment by a LLM, here gpt4.
+      format_coef_se:
+      signif_stars: Significance stars in table
+      code: Deduced from the Code
+
+  ind_keyword:
+    descr: Mainly for keyword indicator.
+
+  phrase:
+    descr: The exact matched phrase, may differ from ind_keyword
+
+  ind_val:
+    descr: |
+      A negative or positive numeric value.
+      Will be typically be
+      1 for an indicator for that table type
+      and -1 for an indicator against that table type.
+
+  ind_counts:
+    descr: |
+      How often do we have exactly the same indicator
+    type: int

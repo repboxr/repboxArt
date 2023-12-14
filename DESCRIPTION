@@ -1,0 +1,11 @@
+Package: repboxArt
+Type: Package
+Title: Converting articles from PDF to text and managing and extracting basic information including tables
+Version: 0.1
+Author: Sebastian Kranz (Ulm University)
+Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
+Description: 
+License: GPL >= 3.0
+Depends: dplyr, restorepoint, stringtools, stringi, ExtractSciTab2, tidyr, repboxUtils
+Encoding: UTF-8
+LazyData: true
