@@ -6,6 +6,6 @@ Author: Sebastian Kranz (Ulm University)
 Maintainer: Sebastian Kranz <sebastian.kranz@uni-ulm.de>
 Description: 
 License: GPL >= 3.0
-Depends: dplyr, restorepoint, stringtools, stringi, ExtractSciTab2, tidyr, repboxUtils
+Depends: dplyr, restorepoint, stringtools, stringi, ExtractSciTab, tidyr, repboxUtils
 Encoding: UTF-8
 LazyData: true
