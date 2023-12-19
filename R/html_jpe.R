@@ -2,18 +2,18 @@
 
 example = function() {
   library(rvest)
-  project.dir = "~/repbox/projects_reg/testart"
-  html.file = list.files(file.path(project.dir, "art","html"),glob2rx("jpe_*.html"), full.names = TRUE)[1]
+  project_dir = "~/repbox/projects_reg/testart"
+  html.file = list.files(file.path(project_dir, "art","html"),glob2rx("jpe_*.html"), full.names = TRUE)[1]
   html = rvest::read_html(html.file, encoding="UTF-8")
 
-  res = art_html_to_parts(project.dir, html = html, journ="jpe")
+  res = art_html_to_parts(project_dir, html = html, journ="jpe")
   text_df = res$text_df
   tab_df = res$tab_df
 
-  rstudioapi::filesPaneNavigate(project.dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 }
 
-jpe_parse_html = function(project.dir, html = rvest::read_html(html.file), html.file=NULL, from.restat = FALSE, journ="jpe") {
+jpe_parse_html = function(project_dir, html = rvest::read_html(html.file), html.file=NULL, from.restat = FALSE, journ="jpe") {
   restore.point("parse_jpe_html")
   library(rvest)
   library(xml2)

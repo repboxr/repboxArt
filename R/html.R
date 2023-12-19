@@ -5,27 +5,27 @@
 
 example = function() {
   library(rvest)
-  project.dir = "~/repbox/projects_reg/testart"
-  html.file = list.files(file.path(project.dir, "art","html"),glob2rx("jpe_*.html"), full.names = TRUE)[1]
+  project_dir = "~/repbox/projects_reg/testart"
+  html.file = list.files(file.path(project_dir, "art","html"),glob2rx("jpe_*.html"), full.names = TRUE)[1]
   journ = str.left.of(basename(html.file),"_")
   html = rvest::read_html(html.file)
 
-  res = art_html_to_parts(project.dir, html = html, journ=journ)
+  res = art_html_to_parts(project_dir, html = html, journ=journ)
   text_df = res$text_df
   tab_df = res$tab_df
 
-  rstudioapi::filesPaneNavigate(project.dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 }
 
-art_html_to_parts = function(project.dir, html = rvest::read_html(html.file), html.file=NULL, journ = str.left.of(basename(projec.dir,"_"))) {
+art_html_to_parts = function(project_dir, html = rvest::read_html(html.file), html.file=NULL, journ = str.left.of(basename(projec.dir,"_"))) {
   restore.point("article_parse_html")
   if (journ=="jpe") {
-    res = jpe_parse_html(project.dir, html, html.file, journ)
+    res = jpe_parse_html(project_dir, html, html.file, journ)
   } else if (journ=="restat") {
-    res = restat_parse_html(project.dir, html, html.file, journ)
+    res = restat_parse_html(project_dir, html, html.file, journ)
   } else {
     # restud, qje, jeea have all very similar HTML format
-    res = restud_parse_html(project.dir, html, html.file, journ)
+    res = restud_parse_html(project_dir, html, html.file, journ)
   }
   text_df = res$text_df; tab_df = res$tab_df
 
@@ -42,7 +42,7 @@ art_html_to_parts = function(project.dir, html = rvest::read_html(html.file), ht
   tab_df$nchar_notes = nchar(tab_df$tabnotes)
 
   # Store results
-  out.dir = file.path(project.dir, "art")
+  out.dir = file.path(project_dir, "art")
   if (!dir.exists(out.dir)) {
     dir.create(out.dir)
   }
@@ -53,7 +53,7 @@ art_html_to_parts = function(project.dir, html = rvest::read_html(html.file), ht
   saveRDS(tab_df, file.path(out.dir, "arttab.Rds"))
   writeLines(text_df$text, file.path(out.dir,"art_text.txt"))
   #invisible(list(text_df=text_df, tab_df=tab_df))
-  parcels = art_save_regdb_tab(project.dir, tab_df)
+  parcels = art_save_regdb_tab(project_dir, tab_df)
   parcels
 }
 

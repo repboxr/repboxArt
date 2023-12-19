@@ -6,26 +6,26 @@ example = function() {
 
   library(repbox)
   library(repboxArt)
-  project.dir = "~/repbox/projects_reg/aejapp_2_4_8"
-  project.dir = "~/repbox/projects_reg/aejapp_3_1_3"
+  project_dir = "~/repbox/projects_reg/aejapp_2_4_8"
+  project_dir = "~/repbox/projects_reg/aejapp_3_1_3"
 
-  art_extract_raw_tabs(project.dir,overwrite = TRUE)
-  art_pdf_pages_to_parts(project.dir)
-  rstudioapi::filesPaneNavigate(project.dir)
+  art_extract_raw_tabs(project_dir,overwrite = TRUE)
+  art_pdf_pages_to_parts(project_dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 
 }
 
 
 
-art_pdf_pages_to_parts = function(project.dir, journ = guess_journ(project.dir), verbose=TRUE, opts=repbox_art_opts()) {
+art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir), verbose=TRUE, opts=repbox_art_opts()) {
   restore.point("art_pdf_pages_to_parts")
-  pages_file = file.path(project.dir, "art","txt_pages.Rds")
+  pages_file = file.path(project_dir, "art","txt_pages.Rds")
   if (!file.exists(pages_file)) return(NULL)
 
 
   # Try to load meta data for article
   # in order to generate link to original tables
-  art = readRDS.or.null(file.path(project.dir, "art","regdb","art.Rds"))[[1]]
+  art = readRDS.or.null(file.path(project_dir, "art","regdb","art.Rds"))[[1]]
   pdf_url = art$pdf_url
 
 
@@ -47,7 +47,7 @@ art_pdf_pages_to_parts = function(project.dir, journ = guess_journ(project.dir),
   line_df$txt[lines] = line_df$trim_txt[lines] = ""
 
   # Try to repair two column articles
-  if (art_has_two_col(project.dir, journ)) {
+  if (art_has_two_col(project_dir, journ)) {
     line_df = art_repair_two_col(line_df, journ)
   }
 
@@ -56,7 +56,7 @@ art_pdf_pages_to_parts = function(project.dir, journ = guess_journ(project.dir),
   line_df = line_df_find_section_cands(line_df,journ=journ)
 
   # Table info from ExtractSciTab
-  tab_file = file.path(project.dir, "art","art_tab_raw.Rds")
+  tab_file = file.path(project_dir, "art","art_tab_raw.Rds")
   tp_df = readRDS.or.null(tab_file)
 
   parcels = list()
@@ -101,9 +101,9 @@ art_pdf_pages_to_parts = function(project.dir, journ = guess_journ(project.dir),
     } else {
       tab_pars$url_org_tab = ""
     }
-    saveRDS(tab_parts, file.path(project.dir, "art", "arttab.Rds"))
+    saveRDS(tab_parts, file.path(project_dir, "art", "arttab.Rds"))
 
-    parcels = art_save_regdb_tab(project.dir, tab_parts)
+    parcels = art_save_regdb_tab(project_dir, tab_parts)
 
   } else {
     if (verbose) cat("\n    No tables found in the article.\n")
@@ -145,7 +145,7 @@ art_pdf_pages_to_parts = function(project.dir, journ = guess_journ(project.dir),
 
   # Now transform to parts df
   parts_df = line_df_to_parts_df(line_df, fn_df)
-  saveRDS(parts_df, file.path(project.dir, "art", "text_parts.Rds"))
+  saveRDS(parts_df, file.path(project_dir, "art", "text_parts.Rds"))
 
   parcels
 

@@ -4,11 +4,11 @@
 
 example = function() {
   library(repbox)
-  project.dir = "~/repbox/projects_reg/aejpol_3_4_8"
-  art_ensure_correct_dirs(project.dir)
-  art_pdf_to_txt_pages(project.dir, overwrite=TRUE)
+  project_dir = "~/repbox/projects_reg/aejpol_3_4_8"
+  art_ensure_correct_dirs(project_dir)
+  art_pdf_to_txt_pages(project_dir, overwrite=TRUE)
 
-  rstudioapi::filesPaneNavigate(project.dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 
   convert.art.pdf("/home/rstudio/statabox/supp/aejapp_12_4_4")
 
@@ -19,15 +19,15 @@ example = function() {
   copy.pdf.and.extract.tabs(parent.dir, pdf.dir, force=TRUE, overwrite=TRUE)
 }
 
-art_get_pdf_files = function(project.dir, full.names=TRUE) {
-  pdf.dir = file.path(project.dir,"art","pdf")
+art_get_pdf_files = function(project_dir, full.names=TRUE) {
+  pdf.dir = file.path(project_dir,"art","pdf")
   list.files(pdf.dir, glob2rx("*.pdf"),full.names = full.names)
 }
 
-art_pdf_to_txt_pages = function(project.dir, overwrite = FALSE, save_txt_file=TRUE) {
+art_pdf_to_txt_pages = function(project_dir, overwrite = FALSE, save_txt_file=TRUE) {
   restore.point("art_all_pdf_to_txt_pages")
-  pdf.files = art_get_pdf_files(project.dir)
-  out.file = file.path(project.dir,"art","txt_pages.Rds")
+  pdf.files = art_get_pdf_files(project_dir)
+  out.file = file.path(project_dir,"art","txt_pages.Rds")
   if (file.exists(out.file) & !overwrite) return()
 
   page_li = lapply(pdf.files, pdf_to_txt_pages)
@@ -44,7 +44,7 @@ art_pdf_to_txt_pages = function(project.dir, overwrite = FALSE, save_txt_file=TR
 
   saveRDS(page_df, out.file)
   if (save_txt_file) {
-    writeLines(page_df$txt, file.path(project.dir,"art","art.txt"))
+    writeLines(page_df$txt, file.path(project_dir,"art","art.txt"))
   }
   invisible(page_df)
 
@@ -83,9 +83,9 @@ substitute_wrong_pdf_txt_chars = function(txt) {
 
 
 
-art_load_txt_pages = function(project.dir) {
+art_load_txt_pages = function(project_dir) {
   restore.point("art_load_txt_pages")
-  out.file = file.path(project.dir,"art","txt_pages.Rds")
+  out.file = file.path(project_dir,"art","txt_pages.Rds")
   if (!file.exists(out.file)) return(NULL)
   readRDS(out.file)
 }

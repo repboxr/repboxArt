@@ -1,9 +1,9 @@
 example = function(){
-  project.dir = "~/repbox/projects_reg/aejpol_3_4_8"
-  project.dir = "~/repbox/projects_reg/testart"
-  project.dir = "~/repbox/projects_reg/aejapp_3_1_3"
-  project.dir = "~/repbox/projects_reg/aejapp_3_2_2"
-  art_extract_raw_tabs(project.dir, overwrite=TRUE, by_page=FALSE)
+  project_dir = "~/repbox/projects_reg/aejpol_3_4_8"
+  project_dir = "~/repbox/projects_reg/testart"
+  project_dir = "~/repbox/projects_reg/aejapp_3_1_3"
+  project_dir = "~/repbox/projects_reg/aejapp_3_2_2"
+  art_extract_raw_tabs(project_dir, overwrite=TRUE, by_page=FALSE)
 }
 
 tabname_to_tabid = function(tabname) {
@@ -19,24 +19,24 @@ tabtitle_to_tabid = function(tabtitle) {
   tabname_to_tabid(tabtitle)
 }
 
-art_load_tabs = function(project.dir) {
+art_load_tabs = function(project_dir) {
   restore.point("art_load_tabs")
 
-  tab.file = file.path(project.dir, "art", "arttab.Rds")
+  tab.file = file.path(project_dir, "art", "arttab.Rds")
   if (!file.exists(tab.file)) return(NULL)
   readRDS(tab.file)
 }
 
 # Extract tabs using ExtractSciTab. Later we will modify it.
-art_extract_raw_tabs = function(project.dir, overwrite=FALSE, by_page=FALSE) {
+art_extract_raw_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE) {
   restore.point("art_extract_raw_tabs")
-  tab.file = file.path(project.dir, "art", "art_tab_raw.Rds")
+  tab.file = file.path(project_dir, "art", "art_tab_raw.Rds")
   if (file.exists(tab.file) & !overwrite) return(NULL)
 
 
-  page_df = art_load_txt_pages(project.dir)
+  page_df = art_load_txt_pages(project_dir)
   if (is.null(page_df)) {
-    cat("\nNo pages extracted for article in ", project.dir,"\n")
+    cat("\nNo pages extracted for article in ", project_dir,"\n")
     return(NULL)
   }
 
@@ -80,7 +80,7 @@ art_extract_raw_tabs = function(project.dir, overwrite=FALSE, by_page=FALSE) {
   tab_df = tab_df %>%
     rename(tabtitle = table_title, tptitle = panel_title)
 
-  saveRDS(tab_df,paste0(project.dir,"/art/art_tab_raw.Rds"))
+  saveRDS(tab_df,paste0(project_dir,"/art/art_tab_raw.Rds"))
 
 
 
@@ -631,11 +631,11 @@ find_stars_str = function(big_str) {
   as.vector(stringi::stri_match_first_regex(right_str, "[*]+")) %>% na.val("")
 }
 
-art_save_regdb_tab = function(project.dir, tab_df) {
+art_save_regdb_tab = function(project_dir, tab_df) {
   restore.point("save_regdb_art_tab")
   library(repboxDB)
 
-  artid = basename(project.dir)
+  artid = basename(project_dir)
   tab_df = tab_df %>% mutate(
     artid = artid,
     tabpos = tab_counter,
@@ -655,7 +655,7 @@ art_save_regdb_tab = function(project.dir, tab_df) {
 
 
   parcels = list(art_tab = list(art_tab=tab_df), art_tab_cell=list(art_tab_cell=cell_df), art_tab_source = list(art_tab_source=tab_df))
-  regdb_save_parcels(parcels, file.path(project.dir, "art","regdb"))
+  regdb_save_parcels(parcels, file.path(project_dir, "art","regdb"))
 
   parcels
 

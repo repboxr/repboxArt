@@ -1,6 +1,6 @@
-guess_journ = function(project.dir) {
-  artid = basename(project.dir)
-  journ = str.left.of(basename(project.dir),"_")
+guess_journ = function(project_dir) {
+  artid = basename(project_dir)
+  journ = str.left.of(basename(project_dir),"_")
   if (journ != "aer") return(journ)
   if (is_aer_pandp(artid)) return("aer_pandp")
   return(journ)

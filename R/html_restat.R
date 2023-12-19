@@ -2,21 +2,21 @@
 
 example = function() {
   library(rvest)
-  project.dir = "~/repbox/projects_reg/testart"
-  html.file = list.files(file.path(project.dir, "art","html"),glob2rx("restat_*.html"), full.names = TRUE)[1]
+  project_dir = "~/repbox/projects_reg/testart"
+  html.file = list.files(file.path(project_dir, "art","html"),glob2rx("restat_*.html"), full.names = TRUE)[1]
   journ = str.left.of(basename(html.file),"_")
   html = rvest::read_html(html.file)
 
-  res = art_html_to_parts(project.dir, html = html, journ=journ)
+  res = art_html_to_parts(project_dir, html = html, journ=journ)
   text_df = res$text_df
   tab_df = res$tab_df
 
-  rstudioapi::filesPaneNavigate(project.dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 }
 
 # Similar but not identical to restud_parse
 # Paragraphs and footnotes have different classes
-restat_parse_html = function(project.dir, html = rvest::read_html(html.file), html.file=NULL, journ = "restud") {
+restat_parse_html = function(project_dir, html = rvest::read_html(html.file), html.file=NULL, journ = "restud") {
   restore.point("parse_restat_html")
   library(rvest)
   library(xml2)

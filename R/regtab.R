@@ -3,28 +3,28 @@ example = function() {
   p_def = get_phrases_def()
 
 
-  project.dir = "~/repbox/projects_reg/aejpol_3_4_8"
-  project.dir = "~/repbox/projects_reg/aejapp_3_2_2"
-  #project.dir = "~/repbox/projects_reg/aejapp_3_1_3"
+  project_dir = "~/repbox/projects_reg/aejpol_3_4_8"
+  project_dir = "~/repbox/projects_reg/aejapp_3_2_2"
+  #project_dir = "~/repbox/projects_reg/aejapp_3_1_3"
 
   opts = repbox_art_opts(single_line_regs = tibble(tabid=c("2","3")))
-  reg_df = art_tabs_to_regs(project.dir, opts)
+  reg_df = art_tabs_to_regs(project_dir, opts)
 
-  rstudioapi::filesPaneNavigate(project.dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 
-  art_extract_raw_tabs(project.dir,overwrite = TRUE)
-  art_pdf_pages_to_parts(project.dir)
+  art_extract_raw_tabs(project_dir,overwrite = TRUE)
+  art_pdf_pages_to_parts(project_dir)
 
   #reg_df = tab_df$coef_df[[7]]
 }
 
-art_tabs_to_regs = function(project.dir, opts = repbox_art_opts(), parcels=list()) {
+art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list()) {
   restore.point("art_tabs_to_regs")
-  tab_df = art_load_tabs(project.dir)
+  tab_df = art_load_tabs(project_dir)
   #tab_df = tab_df[4,]
   if (NROW(tab_df)==0) return(NULL)
 
-  parcels = load_parcels(project.dir, "art_tab_cell",parcels = parcels)
+  parcels = load_parcels(project_dir, "art_tab_cell",parcels = parcels)
 
   #cell_df = tab_df_to_cell_df(tab_df)
   cell_df = parcels$art_tab_cell$art_tab_cell
@@ -126,10 +126,10 @@ art_tabs_to_regs = function(project.dir, opts = repbox_art_opts(), parcels=list(
 
 
   # Save in internal format
-  saveRDS(reg_df, file.path(project.dir,"art","reg_df.Rds"))
+  saveRDS(reg_df, file.path(project_dir,"art","reg_df.Rds"))
 
   # Save in regdb format
-  new_parcels = art_reg_save_regdb(project.dir, reg_df, stat_df, cell_df)
+  new_parcels = art_reg_save_regdb(project_dir, reg_df, stat_df, cell_df)
 
   parcels[names(new_parcels)] = new_parcels
 
@@ -273,13 +273,13 @@ make_art_small_reg = function(reg_df) {
   small_reg_df
 }
 
-art_reg_save_regdb = function(project.dir, reg_df, stat_df, cell_df) {
+art_reg_save_regdb = function(project_dir, reg_df, stat_df, cell_df) {
   restore.point("art_reg_save_regdb")
   library(repboxDB)
   specs = regdb_load_specs(libs="repboxArt")
 
   parcels = list()
-  artid = basename(project.dir)
+  artid = basename(project_dir)
   reg_df = ungroup(reg_df)
   reg_df$artid = artid
 
@@ -335,10 +335,10 @@ art_reg_save_regdb = function(project.dir, reg_df, stat_df, cell_df) {
   parcels$art_reg$art_regstat = stat_df
 
 
-  dir = file.path(project.dir, "art","regdb")
+  dir = file.path(project_dir, "art","regdb")
   regdb_save_parcels(parcels, dir)
 
-  #rstudioapi::filesPaneNavigate(file.path(project.dir, "art","regdb"))
+  #rstudioapi::filesPaneNavigate(file.path(project_dir, "art","regdb"))
 
   invisible(parcels)
 }

@@ -1,30 +1,30 @@
 example = function() {
   make_phrases_def()
   p_def = get_phrases_def()
-  project.dir = "~/repbox/projects_reg/testart"
-  project.dir = "~/repbox/projects_reg/aejapp_3_2_2"
-  project.dir = "~/repbox/projects_reg/aejapp_3_1_3"
+  project_dir = "~/repbox/projects_reg/testart"
+  project_dir = "~/repbox/projects_reg/aejapp_3_2_2"
+  project_dir = "~/repbox/projects_reg/aejapp_3_1_3"
 
-  art_pdf_pages_to_parts(project.dir)
-  art_phrase_analysis(project.dir)
+  art_pdf_pages_to_parts(project_dir)
+  art_phrase_analysis(project_dir)
 
-  rstudioapi::filesPaneNavigate(project.dir)
+  rstudioapi::filesPaneNavigate(project_dir)
 
-  ind_tab = readRDS(file.path(project.dir,"art","regdb","ind_tab_type.Rds"))[[1]]
+  ind_tab = readRDS(file.path(project_dir,"art","regdb","ind_tab_type.Rds"))[[1]]
   View (ind_tab)
 
 }
 
-art_phrase_analysis = function(project.dir) {
+art_phrase_analysis = function(project_dir) {
   restore.point("art_phrase_analysis")
-  res_text = art_text_parts_phrase_analysis(project.dir)
-  res_tab = art_tab_phrase_analysis(project.dir)
+  res_text = art_text_parts_phrase_analysis(project_dir)
+  res_tab = art_tab_phrase_analysis(project_dir)
 
   refs = res_text[c("tab_ref","fig_ref","col_ref")]
-  saveRDS(refs, file.path(project.dir, "art","refs_tab_fig_col.Rds") )
+  saveRDS(refs, file.path(project_dir, "art","refs_tab_fig_col.Rds") )
 
   res = list(text = res_text$phrases_loc, tab=res_tab$phrases_loc)
-  saveRDS(res, file.path(project.dir, "art","phrases.Rds"))
+  saveRDS(res, file.path(project_dir, "art","phrases.Rds"))
 
 
   # Save table type indicators in regdb
@@ -35,7 +35,7 @@ art_phrase_analysis = function(project.dir) {
 
   library(repboxDB)
   specs = regdb_load_specs(libs="repboxArt")
-  artid = basename(project.dir)
+  artid = basename(project_dir)
 
   tt_df$artid = artid
   coty_df$artid = artid
@@ -62,12 +62,12 @@ art_phrase_analysis = function(project.dir) {
   regdb_check_data(coty_df,"ind_col_type")
   parcels$ind_col_type = list(ind_col_type=coty_df)
 
-  dir = file.path(project.dir, "art","regdb")
+  dir = file.path(project_dir, "art","regdb")
   regdb_save_parcels(parcels, dir)
 
 }
 
-art_tab_phrase_analysis = function(project.dir, tab_df=art_load_tab_df(project.dir), p_def = get_phrases_def()) {
+art_tab_phrase_analysis = function(project_dir, tab_df=art_load_tab_df(project_dir), p_def = get_phrases_def()) {
   restore.point("art_tab_phrase_analysis")
 
   n = NROW(tab_df)
@@ -97,7 +97,7 @@ art_tab_phrase_analysis = function(project.dir, tab_df=art_load_tab_df(project.d
       search_part == part |
       (not_search_part != "" & not_search_part != part)
     ) %>%
-    mutate(ind_type = paste0("keyword_", part), ind_val=1, artid=basename(project.dir)) %>%
+    mutate(ind_type = paste0("keyword_", part), ind_val=1, artid=basename(project_dir)) %>%
     rename(tab_type = ind, ind_keyword=key )
 
   cols = c("tabid","tab_type", "ind_keyword","phrase", "part","sentence","ind_type", "ind_val")
@@ -111,7 +111,7 @@ art_tab_phrase_analysis = function(project.dir, tab_df=art_load_tab_df(project.d
 
 }
 
-art_text_parts_phrase_analysis = function(project.dir, text_df=art_load_text_parts(project.dir), p_def=get_phrases_def()) {
+art_text_parts_phrase_analysis = function(project_dir, text_df=art_load_text_parts(project_dir), p_def=get_phrases_def()) {
   restore.point("art_text_parts_phrase_analysis")
   txt = merge.lines(text_df$text)
 
