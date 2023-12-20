@@ -43,14 +43,14 @@ art_phrase_analysis = function(project_dir) {
   # Count duplicates
   tt_df = regdb_select_fields(tt_df,"ind_tab_type", ignore="ind_counts")
   tt_df = tt_df %>%
-    group_by(across()) %>%
+    group_by(across(everything())) %>%
     summarize(
       ind_counts = n()
     )
 
   coty_df = regdb_select_fields(coty_df,"ind_col_type", ignore="ind_counts")
   coty_df = coty_df %>%
-    group_by(across()) %>%
+    group_by(across(everything())) %>%
     summarize(
       ind_counts = n()
     )

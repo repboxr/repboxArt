@@ -17,7 +17,7 @@ example = function() {
 
 
 
-art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir), verbose=TRUE, opts=repbox_art_opts()) {
+art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, opts), verbose=TRUE, opts=repbox_art_opts()) {
   restore.point("art_pdf_pages_to_parts")
   pages_file = file.path(project_dir, "art","txt_pages.Rds")
   if (!file.exists(pages_file)) return(NULL)
@@ -42,7 +42,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir),
     ) %>%
     ungroup()
 
-  line_df = line_df_find_page_header_footer(line_df, journ)
+  line_df = line_df_find_page_header_footer(line_df, journ, opts=opts)
   lines = line_df$type != ""
   line_df$txt[lines] = line_df$trim_txt[lines] = ""
 
@@ -53,7 +53,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir),
 
   # Candidate rows for section titles before
   # removing table and figure rows
-  line_df = line_df_find_section_cands(line_df,journ=journ)
+  line_df = line_df_find_section_cands(line_df,journ=journ, opts=opts)
 
   # Table info from ExtractSciTab
   tab_file = file.path(project_dir, "art","art_tab_raw.Rds")
@@ -96,10 +96,10 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir),
     }
     if (verbose) cat(paste0("\n    Found ", NROW(tab_parts), " tables: ", paste0(tab_parts$tabid, collapse=", ")))
 
-    if (!is.null(pdf_url) & !is.na(pdf_url)) {
+    if (!is_empty(pdf_url)) {
       tab_parts$url_org_tab = paste0(pdf_url,"#page=", tab_parts$start_page)
     } else {
-      tab_pars$url_org_tab = ""
+      tab_parts$url_org_tab = ""
     }
     saveRDS(tab_parts, file.path(project_dir, "art", "arttab.Rds"))
 
@@ -130,7 +130,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir),
   # Find footnotes
   lines = line_df$type != ""
   line_df$txt[lines] = line_df$trim_txt[lines] = ""
-  res = line_df_find_footnotes(line_df, journ)
+  res = line_df_find_footnotes(line_df, journ, opts)
 
   line_df = res$line_df; fn_df = res$fn_df
 
@@ -138,10 +138,10 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir),
   # Find section headers
   line_df$sec_num = 0
 
-  line_df = line_df_find_sections(line_df, journ)
+  line_df = line_df_find_sections(line_df, journ, opts=opts)
 
   # Find junk lines that will also be cut out
-  line_df = line_df_find_junk_lines(line_df, journ)
+  line_df = line_df_find_junk_lines(line_df, journ, opts=opts)
 
   # Now transform to parts df
   parts_df = line_df_to_parts_df(line_df, fn_df)
@@ -244,7 +244,7 @@ combine_short_paragraphs = function(para, min_words=20) {
 
 # Journal dependen additional junk stuff that can be neglected
 # E.g. pages in the end that list which articles cite this one
-line_df_find_junk_lines = function(line_df, journ) {
+line_df_find_junk_lines = function(line_df, journ, opts) {
   restore.point("line_df_find_junk_line")
   if (startsWith(line_df$txt[1],"American Economic")) {
     line_df$type[1] = "junk"
@@ -271,12 +271,13 @@ line_df_find_junk_lines = function(line_df, journ) {
   line_df
 }
 
-line_df_find_section_cands = function(line_df, journ) {
-  line_df_find_sections(line_df, journ, just_cand=TRUE, verbose=FALSE)
+line_df_find_section_cands = function(line_df, journ, opts) {
+  line_df_find_sections(line_df, journ,opts=opts, just_cand=TRUE, verbose=FALSE)
 }
 
-line_df_find_sections = function(line_df, journ, just_cand = FALSE, verbose=TRUE) {
+line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose=TRUE) {
   restore.point("line_df_find_sections")
+  fail_fun = make_fail_fun(opts$not_implemented_action)
   #line_df$first_word = stri_extract_first_boundaries(line_df$trim_txt,type="word")
   #line_df$first_char = stri_sub(line_df$first_word,1,1)
 
@@ -333,7 +334,7 @@ line_df_find_sections = function(line_df, journ, just_cand = FALSE, verbose=TRUE
 
 
   } else {
-    stop("Find sections not yet implemented for journal ", journ)
+    fail_fun("Find sections not yet implemented for journal ", journ)
   }
 
   if (just_cand){
@@ -475,8 +476,9 @@ identify_figure_lines_on_page = function(page, line_df, fig_df) {
 }
 
 
-line_df_find_footnotes = function(line_df, journ) {
+line_df_find_footnotes = function(line_df, journ, opts) {
   restore.point("line_df_find_footnotes")
+  fail_fun = make_fail_fun(opts$not_implemented_action)
   if (startsWith(journ,"aej") | journ %in% c("aer","aeri","jep")) {
     su5 = substring(line_df$trim_txt,1,5)
     int = suppressWarnings(as.numeric((su5)))
@@ -515,9 +517,10 @@ line_df_find_footnotes = function(line_df, journ) {
       fn_df = df
     }
   } else {
-    stop(paste0("Footnote detection not yet implemented for journal ", journ))
+    fail_fun("Footnote detection not yet implemented for journal ", journ)
+    return(list(line_df=line_df, fn_df=NULL))
   }
-  if (NROW(fn_df)==0) return(line_df)
+  if (NROW(fn_df)==0) return(list(line_df=line_df, fn_df=NULL))
 
   end_lines_cand = sort(c(fn_df$start_line-1, which(line_df$rev_pline==1), NROW(line_df)))
   end_ind = findInterval(fn_df$start_line, end_lines_cand)+1
@@ -716,13 +719,14 @@ is_really_a_note_line = function(txt, trim_txt) {
 
   if (startsWith(txt,"      ")) return(TRUE)
 
-
-  cat("\n\nThe table note beginning does not satisfy any of our checking criteria.  That is a very crude heuristic.")
+  cat("\n\nThe text below the table note does not satisfy any of our (crude) checking criteria for a table note.")
   #stop()
   return(FALSE)
 }
 
-line_df_find_page_header_footer = function(line_df, journ) {
+line_df_find_page_header_footer = function(line_df, journ, opts) {
+  restore.point("line_df_find_page_header_footer")
+  fail_fun = make_fail_fun(opts$not_implemented_action)
   wtxt = line_df$trim_txt
 
   start_lines = which(line_df$pline == 1)
@@ -744,7 +748,8 @@ line_df_find_page_header_footer = function(line_df, journ) {
       (startsWith(str,"VOL.") & has.substr(str, " NO"))
     wtxt[lines[clear]] = ""
   } else {
-    stop(paste0("Find page header / footer not yet implemented for journal ", journ))
+    fail_fun("Find page header / footer not yet implemented for journal ", journ)
+    return(line_df)
   }
 
   wtxt[start_lines]
