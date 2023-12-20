@@ -128,8 +128,8 @@ art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(
   # Save in internal format
   saveRDS(reg_df, file.path(project_dir,"art","reg_df.Rds"))
 
-  # Save in regdb format
-  new_parcels = art_reg_save_regdb(project_dir, reg_df, stat_df, cell_df)
+  # Save in repdb format
+  new_parcels = art_reg_save_repdb(project_dir, reg_df, stat_df, cell_df)
 
   parcels[names(new_parcels)] = new_parcels
 
@@ -273,10 +273,10 @@ make_art_small_reg = function(reg_df) {
   small_reg_df
 }
 
-art_reg_save_regdb = function(project_dir, reg_df, stat_df, cell_df) {
-  restore.point("art_reg_save_regdb")
+art_reg_save_repdb = function(project_dir, reg_df, stat_df, cell_df) {
+  restore.point("art_reg_save_repdb")
   library(repboxDB)
-  specs = regdb_load_specs(libs="repboxArt")
+  specs = repdb_load_specs(libs="repboxArt")
 
   parcels = list()
   artid = basename(project_dir)
@@ -284,11 +284,11 @@ art_reg_save_regdb = function(project_dir, reg_df, stat_df, cell_df) {
   reg_df$artid = artid
 
 
-  regdb_check_data(reg_df,"art_reg")
+  repdb_check_data(reg_df,"art_reg")
   parcels$art_reg = list(art_reg=reg_df)
 
   small_reg_df = make_art_small_reg(reg_df)
-  regdb_check_data(small_reg_df,"art_small_reg")
+  repdb_check_data(small_reg_df,"art_small_reg")
   parcels$art_reg$art_small_reg = small_reg_df
 
 
@@ -312,7 +312,7 @@ art_reg_save_regdb = function(project_dir, reg_df, stat_df, cell_df) {
     left_join(select(cell_df, coef_cellid=cellid, tabid,coef_cell_col=col, coef_cell_row=row ), by=c("tabid","coef_cell_col","coef_cell_row")) %>%
     left_join(select(cell_df, paren_cellid=cellid, tabid,paren_cell_col=col, paren_cell_row=row ), by=c("tabid","paren_cell_col","paren_cell_row"))
 
-  regdb_check_data(co,"art_regcoef")
+  repdb_check_data(co,"art_regcoef")
 
   parcels$art_reg$art_regcoef = co
 
@@ -331,14 +331,14 @@ art_reg_save_regdb = function(project_dir, reg_df, stat_df, cell_df) {
 
 
 
-  regdb_check_data(stat_df, "art_regstat")
+  repdb_check_data(stat_df, "art_regstat")
   parcels$art_reg$art_regstat = stat_df
 
 
-  dir = file.path(project_dir, "art","regdb")
-  regdb_save_parcels(parcels, dir)
+  dir = file.path(project_dir, "art","repdb")
+  repdb_save_parcels(parcels, dir)
 
-  #rstudioapi::filesPaneNavigate(file.path(project_dir, "art","regdb"))
+  #rstudioapi::filesPaneNavigate(file.path(project_dir, "art","repdb"))
 
   invisible(parcels)
 }

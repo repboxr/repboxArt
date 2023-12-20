@@ -10,7 +10,7 @@ example = function() {
 
   rstudioapi::filesPaneNavigate(project_dir)
 
-  ind_tab = readRDS(file.path(project_dir,"art","regdb","ind_tab_type.Rds"))[[1]]
+  ind_tab = readRDS(file.path(project_dir,"art","repdb","ind_tab_type.Rds"))[[1]]
   View (ind_tab)
 
 }
@@ -27,28 +27,28 @@ art_phrase_analysis = function(project_dir) {
   saveRDS(res, file.path(project_dir, "art","phrases.Rds"))
 
 
-  # Save table type indicators in regdb
+  # Save table type indicators in repdb
   parcels = list()
   tt_df = bind_rows(res_tab$tt_df, res_text$tt_df)
   coty_df = res_text$coty_df
   if (NROW(tt_df)==0 & NROW(coty_df)==0) return(parcels)
 
   library(repboxDB)
-  specs = regdb_load_specs(libs="repboxArt")
+  specs = repdb_load_specs(libs="repboxArt")
   artid = basename(project_dir)
 
   tt_df$artid = artid
   coty_df$artid = artid
 
   # Count duplicates
-  tt_df = regdb_select_fields(tt_df,"ind_tab_type", ignore="ind_counts")
+  tt_df = repdb_select_fields(tt_df,"ind_tab_type", ignore="ind_counts")
   tt_df = tt_df %>%
     group_by(across(everything())) %>%
     summarize(
       ind_counts = n()
     )
 
-  coty_df = regdb_select_fields(coty_df,"ind_col_type", ignore="ind_counts")
+  coty_df = repdb_select_fields(coty_df,"ind_col_type", ignore="ind_counts")
   coty_df = coty_df %>%
     group_by(across(everything())) %>%
     summarize(
@@ -56,14 +56,14 @@ art_phrase_analysis = function(project_dir) {
     )
 
 
-  regdb_check_data(tt_df,"ind_tab_type")
+  repdb_check_data(tt_df,"ind_tab_type")
   parcels$ind_tab_type = list(ind_tab_type=tt_df)
 
-  regdb_check_data(coty_df,"ind_col_type")
+  repdb_check_data(coty_df,"ind_col_type")
   parcels$ind_col_type = list(ind_col_type=coty_df)
 
-  dir = file.path(project_dir, "art","regdb")
-  regdb_save_parcels(parcels, dir)
+  dir = file.path(project_dir, "art","repdb")
+  repdb_save_parcels(parcels, dir)
 
 }
 

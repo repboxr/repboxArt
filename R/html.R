@@ -53,7 +53,7 @@ art_html_to_parts = function(project_dir, html = rvest::read_html(html.file), ht
   saveRDS(tab_df, file.path(out.dir, "arttab.Rds"))
   writeLines(text_df$text, file.path(out.dir,"art_text.txt"))
   #invisible(list(text_df=text_df, tab_df=tab_df))
-  parcels = art_save_regdb_tab(project_dir, tab_df)
+  parcels = art_save_repdb_tab(project_dir, tab_df)
   parcels
 }
 

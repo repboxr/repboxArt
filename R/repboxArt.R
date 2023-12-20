@@ -128,10 +128,10 @@ art_save_basic_info = function(project_dir) {
     stop("We should add code that generates the data doi based on the URL for the repo.")
   }
 
-  spec = regdb_get_spec("art")
-  regdb_check_data(art, "art")
+  spec = repdb_get_spec("art")
+  repdb_check_data(art, "art")
   parcels = list(art=list(art=art))
-  regdb_save_parcels(parcels, file.path(project_dir, "art","regdb"))
+  repdb_save_parcels(parcels, file.path(project_dir, "art","repdb"))
   invisible(art)
 
 }
