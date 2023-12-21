@@ -655,7 +655,7 @@ art_save_repdb_tab = function(project_dir, tab_df) {
 
 
   parcels = list(art_tab = list(art_tab=tab_df), art_tab_cell=list(art_tab_cell=cell_df), art_tab_source = list(art_tab_source=tab_df))
-  repdb_save_parcels(parcels, file.path(project_dir, "art","repdb"))
+  repdb_save_parcels(parcels, file.path(project_dir, "repdb"))
 
   parcels
 

@@ -15,7 +15,7 @@ art_extract_paren_type_from_tab_notes = function(project_dir, tab_df=art_load_ta
     TRUE ~ NA_character_
   )
   parcels = list(art_tab_note_paren_type = list(art_tab_note_paren_type=tab_df))
-  repdb_save_parcels(parcels, file.path(project_dir,"art","repdb"))
+  repdb_save_parcels(parcels, file.path(project_dir,"repdb"))
   tab_df
 
 }

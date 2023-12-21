@@ -62,7 +62,7 @@ art_phrase_analysis = function(project_dir) {
   repdb_check_data(coty_df,"ind_col_type")
   parcels$ind_col_type = list(ind_col_type=coty_df)
 
-  dir = file.path(project_dir, "art","repdb")
+  dir = file.path(project_dir, "repdb")
   repdb_save_parcels(parcels, dir)
 
 }

@@ -131,7 +131,7 @@ art_save_basic_info = function(project_dir) {
   spec = repdb_get_spec("art")
   repdb_check_data(art, "art")
   parcels = list(art=list(art=art))
-  repdb_save_parcels(parcels, file.path(project_dir, "art","repdb"))
+  repdb_save_parcels(parcels, file.path(project_dir, "repdb"))
   invisible(art)
 
 }
