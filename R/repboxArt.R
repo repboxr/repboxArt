@@ -125,7 +125,7 @@ art_save_basic_info = function(project_dir) {
     # I would need to better parse the OpenICPSR page to extract the DOI
     art$data_doi = NA
   } else if (!is.na(art$repo)) {
-    stop("We should add code that generates the data doi based on the URL for the repo.")
+    stop(paste0("We should add code that generates the data doi based on the URL for the repo ", art$repo))
   }
 
   spec = repdb_get_spec("art")
