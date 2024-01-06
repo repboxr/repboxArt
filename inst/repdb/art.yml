@@ -35,18 +35,6 @@ fields:
 
   article_doi:
 
-  data_url:
-
-  data_doi:
-
-  data_repo:
-    descr: Abbreviation for the repo of the replication package.
-    val_descr:
-      oi: OpenICPSR
-      dv: Dataverse
-      ze: Zenodo
-
-
   appendix_pdf_url:
 
   authors:
@@ -54,4 +42,21 @@ fields:
   num_authors:
 
   abstract:
+
+  has_art_pdf:
+    type: bool
+
+  has_art_html:
+    type: bool
+
+  num_appendix_pdf:
+    type: int
+
+  num_appendix_html:
+    type: int
+
+  is_open_access:
+    type: bool
+
+  license_type:
 
