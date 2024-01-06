@@ -95,45 +95,11 @@ version_repbox_art = function() {
 art_save_basic_info = function(project_dir) {
   restore.point("art_save_basic_info")
   library(repboxDB)
-<<<<<<< HEAD
-  ejd.file = file.path(project_dir, "meta", "ejd_art.Rds")
-  if (!file.exists(ejd.file)) return(NULL)
-  art = readRDS(ejd.file)
-  art = art %>%
-    mutate(
-      artid = id,
-      version_repbox_art = version_repbox_art(),
-      appendix_pdf_url = NA,
-      pdf_url = NA,
-      html_url = NA,
-      article_doi = NA,
-      data_doi = NA,
-      data_repo = repo
-    )
-  if (art$journ %in% c("aer","jep","aejmac","aejapp","aejmic","aejpol","pandp")) {
-    #https://www.aeaweb.org/articles?id=10.1257/app.3.2.34
-    #https://www.aeaweb.org/articles/pdf/doi/10.1257/app.3.2.34
-    art$pdf_url = stri_replace_first_fixed(art$article_url, "/articles?id=","/articles/pdf/doi/")
-    # 10.1257/app.3.2.34
-    art$article_doi = str.right.of(art$article_url, "/articles?id=")
-    if (is.na(art$repo)) {
-      # Old data URL don't work anymore
-      art$data_url = NA
-    }
-  }
-  if (isTRUE(art$repo == "oi")) {
-    # Don't see a fixed rule to map data DOI with data URL
-    # I would need to better parse the OpenICPSR page to extract the DOI
-    art$data_doi = NA
-  } else if (!is.na(art$repo)) {
-    stop(paste0("We should add code that generates the data doi based on the URL for the repo ", art$repo))
-=======
   ejd.file = file.path(project_dir, "meta", "art_meta.Rds")
   if (!file.exists(ejd.file)) {
     art = list()
   } else {
     art = readRDS(ejd.file)
->>>>>>> 932d3b8633b4727caefe245bab65aabaed5905cc
   }
   art = set_missing_fields(art,
     artid = id,
