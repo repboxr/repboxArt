@@ -113,6 +113,8 @@ art_save_basic_info = function(project_dir) {
     is_open_access = NA,
     license_type = NA
   )
+  art = create.missing.cols(art,c("title", "journ", "vol", "issue", "year", "date", "article_url", "authors", "num_authors", "abstract"), NA)
+
   art$has_art_pdf = art_has_pdf(project_dir)
   art$has_art_html = art_has_html(project_dir)
 
