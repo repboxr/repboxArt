@@ -19,7 +19,7 @@ example = function() {
 
 art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_opts(overwrite=overwrite)) {
   restore.point("art_update_project")
-
+  repbox_set_current_project_dir(project_dir)
   overwrite = opts$overwrite
   art_ensure_correct_dirs(project_dir)
   art = art_save_basic_info(project_dir)

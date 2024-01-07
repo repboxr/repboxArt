@@ -79,7 +79,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
         end_line = max(c(end_line),na.rm=TRUE),
         title_line = min(table_title_line, na.rm=TRUE)
       )
-    line_df = line_df_find_table_parts(line_df, tab_df)
+    line_df = line_df_find_table_parts(line_df, tab_df, opts=opts)
 
     # Note: tab_parts have not yet specified cell_df
     tab_parts = line_df_extract_table_parts(line_df)
@@ -123,7 +123,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
   lines = line_df$type != ""
   line_df$txt[lines] = line_df$trim_txt[lines] = ""
 
-  res = line_df_find_figures(line_df, journ)
+  res = line_df_find_figures(line_df, journ, opts=opts)
   line_df = res$line_df; fig_df = res$fig_df
 
 
@@ -277,9 +277,6 @@ line_df_find_section_cands = function(line_df, journ, opts) {
 
 line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose=TRUE) {
   restore.point("line_df_find_sections")
-  fail_fun = make_fail_fun(opts$not_implemented_action)
-  #line_df$first_word = stri_extract_first_boundaries(line_df$trim_txt,type="word")
-  #line_df$first_char = stri_sub(line_df$first_word,1,1)
 
   if (just_cand) {
     line_df$sec_cand_title = FALSE
@@ -287,7 +284,6 @@ line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose
 
   if (startsWith(journ,"aej") | journ %in% c("aer","aeri","jep")) {
     # Sections of these journals start with roman numbers followed by a .
-
     cand_roman = stri_extract_first_regex(line_df$trim_txt,"^[IVXivx]+(?=([ ]?\\.[ \t]))")
     rows = which(!is.na(cand_roman))
     cand_lines = rows
@@ -298,7 +294,8 @@ line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose
     } else {
       if (!all(cand_num == seq_along(cand_num))) {
         line_df$trim_txt[cand_lines]
-        stop("Could not identify unique section starts. Need to augment section detection code.")
+        repbox_problem("Could not identify unique section starts. Need to augment section detection code.","art_identify_sections",opts$detection_problem)
+        can_num = cand_lines = NULL
       }
       line_df$type[cand_lines] = "sec1"
       line_df$sec_num[cand_lines] = cand_num
@@ -334,7 +331,7 @@ line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose
 
 
   } else {
-    fail_fun("Find sections not yet implemented for journal ", journ)
+    repbox_problem(paste0("Find sections not yet implemented for journal ", journ),"art_journ_not_impl_find_sections", opts$not_implemented_action)
   }
 
   if (just_cand){
@@ -348,7 +345,7 @@ line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose
 }
 
 
-line_df_find_figures = function(line_df, journ) {
+line_df_find_figures = function(line_df, journ, opts=opts) {
   restore.point("line_df_find_figures")
 
   str = stri_extract_first_regex(line_df$trim_txt, "^Figure [A-Z]?[-\\.]?[1-9][0-9]?")
@@ -389,7 +386,7 @@ line_df_find_figures = function(line_df, journ) {
 
   for (i in seq_along(pages)) {
     page = pages[i]
-    res = identify_figure_lines_on_page(page, line_df, fig_df)
+    res = identify_figure_lines_on_page(page, line_df, fig_df, opts=opts)
     line_df = res$line_df; fig_df = res$fig_df
   }
 
@@ -412,7 +409,7 @@ line_df_find_figures = function(line_df, journ) {
 }
 
 
-identify_figure_lines_on_page = function(page, line_df, fig_df) {
+identify_figure_lines_on_page = function(page, line_df, fig_df, opts) {
   restore.point("identify_figure_lines_on_page")
   #if (page==9) stop()
   flines = which(fig_df$page==page)
@@ -461,7 +458,7 @@ identify_figure_lines_on_page = function(page, line_df, fig_df) {
 
     line_df$type[alines] = "fig"
 
-    notes_se = extract_tab_note_lines(line_df$txt, line_df$trim_txt, max(alines),rev_pline = line_df$rev_pline[max(alines)])
+    notes_se = extract_tab_note_lines(line_df$txt, line_df$trim_txt, max(alines),rev_pline = line_df$rev_pline[max(alines)], opts=opts)
     fig_ind = flines[min(i, length(flines))]
 
     if (!is.null(notes_se)) {
@@ -478,7 +475,7 @@ identify_figure_lines_on_page = function(page, line_df, fig_df) {
 
 line_df_find_footnotes = function(line_df, journ, opts) {
   restore.point("line_df_find_footnotes")
-  fail_fun = make_fail_fun(opts$not_implemented_action)
+  #fail_fun = make_fail_fun(opts$not_implemented_action)
   if (startsWith(journ,"aej") | journ %in% c("aer","aeri","jep")) {
     su5 = substring(line_df$trim_txt,1,5)
     int = suppressWarnings(as.numeric((su5)))
@@ -517,7 +514,7 @@ line_df_find_footnotes = function(line_df, journ, opts) {
       fn_df = df
     }
   } else {
-    fail_fun("Footnote detection not yet implemented for journal ", journ)
+    repbox_problem(paste0("Footnote detection not yet implemented for journal ", journ),"art_journ_not_impl_find_footnote", opts$not_implemented_action)
     return(list(line_df=line_df, fn_df=NULL))
   }
   if (NROW(fn_df)==0) return(list(line_df=line_df, fn_df=NULL))
@@ -653,7 +650,7 @@ combine_text_lines = function(txt, remove.line.end.hyphen = TRUE, replace.line.b
   txt
 }
 
-line_df_find_table_parts = function(line_df, tab_df) {
+line_df_find_table_parts = function(line_df, tab_df, opts) {
   restore.point("line_df_find_table_parts")
   type = line_df$type
   tabid = line_df$tabid
@@ -662,7 +659,7 @@ line_df_find_table_parts = function(line_df, tab_df) {
   for (tab_row in seq_len(NROW(tab_df))) {
     tab = tab_df[tab_row,]
     type[tab$title_line] = "tabtitle"
-    note_lines = extract_tab_note_lines(line_df$txt, line_df$trim_txt, tab$end_line, line_df$rev_pline[tab$end_line])
+    note_lines = extract_tab_note_lines(line_df$txt, line_df$trim_txt, tab$end_line, line_df$rev_pline[tab$end_line], opts=opts)
     if (!is.null(note_lines)) {
       type[from_to(tab$start_line+1,note_lines[1]-1)] = "tab"
       type[from_to(note_lines[1], note_lines[2])] = "tabnotes"
@@ -677,7 +674,7 @@ line_df_find_table_parts = function(line_df, tab_df) {
   line_df
 }
 
-extract_tab_note_lines = function(txt,trim_txt, tab_end_line, rev_pline) {
+extract_tab_note_lines = function(txt,trim_txt, tab_end_line, rev_pline, opts) {
   restore.point("extract_tab_note_lines")
   n = length(txt)
   lines = from_to(tab_end_line+1,tab_end_line+min(10, rev_pline-1), max=n)
@@ -685,7 +682,7 @@ extract_tab_note_lines = function(txt,trim_txt, tab_end_line, rev_pline) {
   if (length(lines)==0) return(NULL)
 
   line = first(lines)
-  is_ok = is_really_a_note_line(txt[line], trim_txt[line])
+  is_ok = is_really_a_note_line(txt[line], trim_txt[line], opts=opts)
   if (!is_ok) return(NULL)
 
 
@@ -700,7 +697,7 @@ extract_tab_note_lines = function(txt,trim_txt, tab_end_line, rev_pline) {
 }
 
 
-is_really_a_note_line = function(txt, trim_txt) {
+is_really_a_note_line = function(txt, trim_txt, opts) {
   restore.point("is_really_a_note_line")
 
   if (stri_detect_regex(trim_txt,"^Note[s]?[\\:\\.]")) return(TRUE)
@@ -719,14 +716,14 @@ is_really_a_note_line = function(txt, trim_txt) {
 
   if (startsWith(txt,"      ")) return(TRUE)
 
-  cat("\n\nThe text below the table note does not satisfy any of our (crude) checking criteria for a table note.")
+  repbox_problem("\n\nThe text below the table note does not satisfy any of our (crude) checking criteria for a table note.","art_table_note", opts$detection_problem)
   #stop()
   return(FALSE)
 }
 
 line_df_find_page_header_footer = function(line_df, journ, opts) {
   restore.point("line_df_find_page_header_footer")
-  fail_fun = make_fail_fun(opts$not_implemented_action)
+  #fail_fun = make_fail_fun(opts$not_implemented_action)
   wtxt = line_df$trim_txt
 
   start_lines = which(line_df$pline == 1)
@@ -748,7 +745,7 @@ line_df_find_page_header_footer = function(line_df, journ, opts) {
       (startsWith(str,"VOL.") & has.substr(str, " NO"))
     wtxt[lines[clear]] = ""
   } else {
-    fail_fun("Find page header / footer not yet implemented for journal ", journ)
+    repbox_problem(paste0("Find page header / footer not yet implemented for journal ", journ),"art_journ_not_impl_find_page_header", opts$not_implemented_action)
     return(line_df)
   }
 
