@@ -58,5 +58,5 @@ fields:
   is_open_access:
     type: bool
 
-  license_type:
+  art_license_type:
 

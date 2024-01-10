@@ -5,7 +5,7 @@ art_has_two_col = function(project_dir, journ) {
   return(TRUE)
 }
 
-art_repair_two_col = function(line_df, journ) {
+art_repair_two_col = function(project_dir, line_df, journ) {
   artid = basename(project_dir)
   if (journ != "aer_pandp") {
     stop("Two col repair currently only implemented for aer_pandp")

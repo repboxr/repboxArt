@@ -111,7 +111,7 @@ art_save_basic_info = function(project_dir) {
     num_appendix_pdf = NA,
     num_appendix_html = NA,
     is_open_access = NA,
-    license_type = NA
+    art_license_type = NA
   )
   art = create.missing.cols(art,c("title", "journ", "vol", "issue", "year", "date", "article_url", "authors", "num_authors", "abstract"), NA)
 

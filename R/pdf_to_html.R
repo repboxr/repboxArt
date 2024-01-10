@@ -48,7 +48,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
 
   # Try to repair two column articles
   if (art_has_two_col(project_dir, journ)) {
-    line_df = art_repair_two_col(line_df, journ)
+    line_df = art_repair_two_col(project_dir, line_df, journ)
   }
 
   # Candidate rows for section titles before
