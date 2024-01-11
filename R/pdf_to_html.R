@@ -25,7 +25,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
 
   # Try to load meta data for article
   # in order to generate link to original tables
-  art = readRDS.or.null(file.path(project_dir, "art","repdb","art.Rds"))[[1]]
+  art = readRDS.or.null(file.path(project_dir, "repdb","art.Rds"))[[1]]
   pdf_url = art$pdf_url
 
 

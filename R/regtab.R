@@ -338,7 +338,7 @@ art_reg_save_repdb = function(project_dir, reg_df, stat_df, cell_df) {
   dir = file.path(project_dir, "repdb")
   repdb_save_parcels(parcels, dir)
 
-  #rstudioapi::filesPaneNavigate(file.path(project_dir, "art","repdb"))
+  #rstudioapi::filesPaneNavigate(file.path(project_dir, "repdb"))
 
   invisible(parcels)
 }

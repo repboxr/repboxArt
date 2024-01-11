@@ -10,7 +10,7 @@ example = function() {
 
   rstudioapi::filesPaneNavigate(project_dir)
 
-  ind_tab = readRDS(file.path(project_dir,"art","repdb","ind_tab_type.Rds"))[[1]]
+  ind_tab = readRDS(file.path(project_dir,"repdb","ind_tab_type.Rds"))[[1]]
   View (ind_tab)
 
 }
