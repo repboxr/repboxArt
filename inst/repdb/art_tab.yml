@@ -43,3 +43,7 @@ fields:
       a PDF, we try to link directly to the page on which the tab is shown.
       In an HTML file we try to directly link to the table if possible (depends
       on whether the HTML page has a proper ID for the table).
+
+  start_page:
+    descr: If the Table is extracted from a PDF, the page number.
+    type: int
