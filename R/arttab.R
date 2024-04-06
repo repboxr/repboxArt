@@ -7,11 +7,18 @@ example = function(){
 }
 
 tabname_to_tabid = function(tabname) {
+  restore.point("tabname_to_tabid")
   tabid = str.right.of(tabname, "able ") %>% trimws()
   tabid = gsub("\\.$","",tabid) %>% trimws()
 
   rows = which(startsWith(tolower(tabname),"appendix"))
   tabid[rows] = paste0("app.",tabid[rows])
+
+  # Update: remove spaces and other special letter
+  # We will later use tabid inside HTML ids: so it should
+  # not have any special symbols anymore
+  tabid = stringi::stri_replace_all_regex(tabid, "[^a-zA-Z0-9_]","")
+  tabid = stringi::stri_replace_all_fixed(tabid, "TABLE","")
   tabid
 }
 
