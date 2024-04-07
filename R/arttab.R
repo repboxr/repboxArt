@@ -485,7 +485,7 @@ repair_slipped_cols = function(loc_df) {
   header.row = unique(header$row)
   # We don't know how to deal with multiple int header rows
   if (length(header.row)>1) {
-    stop("A table panels seems to have multiple header rows of the form (1) (2) (3) ... We do not yet know how to deal with it. Look at the code!")
+    repbox_problem(msg="A table panels seems to have multiple header rows of the form (1) (2) (3) ... We do not yet know how to deal with it. Look at the code!",type="art_tab_mult_header")
     return(loc_df)
   }
 
