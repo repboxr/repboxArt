@@ -89,7 +89,7 @@ art_ensure_correct_dirs = function(project_dir) {
 }
 
 version_repbox_art = function() {
-  return(0)
+  return(1L)
 }
 
 art_save_basic_info = function(project_dir) {
