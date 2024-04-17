@@ -197,7 +197,7 @@ art_reg_stats_phrases = function() {
   bind_rows(
     tibble(key="nobs", phrase = c("obs","observation","observations","n","no obs","n observations","number of observations")),
     tibble(key="r2", phrase = c("r2","rsquared","r squared")),
-    tibble(key="adj_r2", phrase = c("adjusted r2", "r2 adj","r2 adjusted","adj r2")),
+    tibble(key="adj_r2", phrase = c("adjusted r2", "r2 adj","r2 adjusted","adj r2","adjusted r 2","adj r 2")),
     tibble(key="ncluster", phrase = c("clusters")),
     tibble(key="r2_o", phrase = c("r2 overall")),
     tibble(key="r2_w", phrase = c("r2 within")),
