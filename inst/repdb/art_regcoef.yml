@@ -4,12 +4,10 @@ name: art_regcoef
 
 descr: |
   Information about extracted coefficients and standard errors from regression tables.
-unique_index:
-  main_index: [artid, regid, coef_pos]
 
 fields:
+
   artid:
-    descr: ID of the article that is analyzed.
 
   regid:
     descr: |
