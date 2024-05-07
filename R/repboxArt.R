@@ -53,6 +53,7 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
 }
 
 
+
 art_has_html = function(project_dir) {
   dir = file.path(project_dir, "art","html")
   if (!dir.exists(dir)) return(FALSE)
