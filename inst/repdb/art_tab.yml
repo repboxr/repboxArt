@@ -47,3 +47,7 @@ fields:
   start_page:
     descr: If the Table is extracted from a PDF, the page number.
     type: int
+
+  tabnotes:
+    descr: |
+      Table notes

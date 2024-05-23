@@ -650,6 +650,9 @@ art_save_repdb_tab = function(project_dir, tab_df) {
 
   )
 
+  if (!has.col(tab_df,"tabnotes")) {
+    tab_df$tabnotes = NA_character_
+  }
 
   repdb_check_data(tab_df, "art_tab_source")
   repdb_check_data(tab_df, "art_tab")
