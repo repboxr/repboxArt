@@ -4,7 +4,7 @@
 
 example = function() {
   library(repbox)
-  project_dir = "~/repbox/projects_reg/aejpol_3_4_8"
+  project_dir = "~/repbox/projects_gha/jeea_19_5_11"
   art_ensure_correct_dirs(project_dir)
   art_pdf_to_txt_pages(project_dir, overwrite=TRUE)
 
@@ -61,6 +61,7 @@ pdf_to_txt_pages = function(pdf.file, from.page=1, to.page=200, enc="UTF-8") {
     cmd = paste0('pdftotext -q -f ', page, ' -l ', page, ' -layout "',pdf.file,'" -')
     res = suppressWarnings(system(cmd,intern = TRUE))
     if (length(res)==0) break
+    res = first_repair_art_pdf_text(res)
     counter = counter+1
     txt_lines[counter] = length(res)
     txt_vec[counter] = merge.lines(res)
@@ -73,6 +74,32 @@ pdf_to_txt_pages = function(pdf.file, from.page=1, to.page=200, enc="UTF-8") {
   page_df
 }
 
+
+first_repair_art_pdf_text = function(txt) {
+  restore.point("first_repair_art_pdf_text")
+
+  trim_txt = trimws(txt)
+  # Remove download info in JEEA text
+  # and empty rows above it
+  # This info can even destroy tables...
+  rows = which(startsWith(trim_txt, "Downloaded from https://academic.oup.com"))
+
+  if (length(rows)>0) {
+    restore.point("first_repair_art_pdf_text2")
+    rem_rows = txt
+
+    filled_rows = which(trim_txt != "")
+    inds = match(rows, filled_rows)
+    start = ifelse(inds > 1,
+      filled_rows[inds-1]+1,
+      1
+    )
+    del_rows = unlist(lapply(seq_along(rows), function(i) start[i]:rows[i]))
+    txt = txt[-del_rows]
+  }
+
+  return(txt)
+}
 
 substitute_wrong_pdf_txt_chars = function(txt) {
   txt = gsub("⫺","-",txt, fixed=TRUE)

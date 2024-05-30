@@ -1,18 +1,16 @@
 example = function() {
+  library(repboxRun)
   library(repboxArt)
-  project_dir = "/home/rstudio/repbox/projects_reg/testart"
-  project_dir = "~/repbox/projects_reg/aejapp_3_4_9"
-  project_dir = "~/repbox/projects_reg/aejapp_3_2_2"
-  overwrite = !TRUE
-  art_update_project(project_dir, overwrite=overwrite)
+  #project_dir = "/home/rstudio/repbox/projects_reg/testart"
+  project_dir = "~/repbox/projects_gha/jeea_19_5_11"
+
+
+  steps = repbox_steps_from(art=TRUE, reproduction=FALSE)
+  steps = repbox_steps_from(art=TRUE, reproduction=FALSE, map=TRUE)
+
+  repboxRun::repbox_run_project(project_dir, lang="stata", steps=steps)
 
   rstudioapi::filesPaneNavigate(project_dir)
-  library(repboxHtml)
-  project_dir = "~/repbox/projects_reg/aejapp_3_2_2"
-  repbox_project_html(project_dir)
-
-  html.dir = file.path(project_dir,"reports")
-  rstudioapi::filesPaneNavigate(html.dir)
 
 
 }
