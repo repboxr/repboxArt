@@ -17,8 +17,12 @@ example = function() {
   rstudioapi::filesPaneNavigate(project_dir)
 }
 
-art_html_to_parts = function(project_dir, html = rvest::read_html(html.file), html.file=NULL, journ = str.left.of(basename(projec.dir,"_"))) {
-  restore.point("article_parse_html")
+art_html_to_parts = function(project_dir) {
+  restore.point("art_html_to_parts")
+  journ = str.left.of(basename(project_dir),"_")
+  html.file = art_get_html_files(project_dir)[1]
+  html = rvest::read_html(html.file)
+
   if (journ=="jpe") {
     res = jpe_parse_html(project_dir, html, html.file, journ)
   } else if (journ=="restat") {
@@ -47,13 +51,21 @@ art_html_to_parts = function(project_dir, html = rvest::read_html(html.file), ht
     dir.create(out.dir)
   }
 
+  save_rds_create_dir(text_df, file.path(project_dir, "art/routes/html", "text_parts.Rds"))
+  save_rds_create_dir(tab_df, file.path(project_dir, "art/routes/html", "arttab.Rds"))
+  writeLines(text_df$text, file.path(project_dir, "art/routes/html","art_text.txt"))
 
 
-  saveRDS(text_df, file.path(out.dir,"text_parts.Rds"))
-  saveRDS(tab_df, file.path(out.dir, "arttab.Rds"))
-  writeLines(text_df$text, file.path(out.dir,"art_text.txt"))
+  tab_df$pdf_file = NA_character_
+  tab_df$html_file = html.file
+  tab_df$url_org_tab = NA_character_
+  tab_df$start_page = NA
+
+  #saveRDS(text_df, file.path(out.dir,"text_parts.Rds"))
+  #saveRDS(tab_df, file.path(out.dir, "arttab.Rds"))
+  #writeLines(text_df$text, file.path(out.dir,"art_text.txt"))
   #invisible(list(text_df=text_df, tab_df=tab_df))
-  parcels = art_save_repdb_tab(project_dir, tab_df)
+  parcels = art_save_repdb_tab(project_dir, tab_df, route="html")
   parcels
 }
 
@@ -221,5 +233,112 @@ html_table_cells_from_tr = function(tab_row, row_num) {
            text = html_text2(cells)) %>%
     select(row, col = col_start, col_end, everything())
   row_df
+}
+
+
+art_get_html_files = function(project_dir, full.names=TRUE) {
+  dir = file.path(project_dir,"art","html")
+  list.files(dir, glob2rx("*.html"),full.names = full.names)
+}
+
+
+art_html_tab_standardize = function(tab_df) {
+  restore.point("art_html_tab_standardize")
+  tab_df$row_df = tab_df$panel_df = vector("list",NROW(tab_df))
+
+  for (i in seq_rows(tab_df)) {
+    res = html_tab_cell_row_panel_df(tab_df[i,])
+    tab_df$cell_df[[i]] = res$cell_df
+    tab_df$row_df[[i]] = res$row_df
+    tab_df$panel_df[[i]] = res$panel_df
+  }
+  tab_df
+}
+
+# Normalize cell_df for Table from HTML
+html_tab_cell_row_panel_df = function(tab) {
+  restore.point("html_tab_cell_row_panel_df")
+
+  cell_df = tab$cell_df[[1]]
+  # We only extract number if it is at the beginning
+  # of in a bracket
+  fp = "([+\\-−]|([+\\-−] ))?(([0-9]*(,[0-9][0-9][0-9])+|([0-9]+))([.][0-9]*)?|[.][0-9]+)"
+  fp_start = paste0("^", fp)
+
+  cell_df = cell_df %>% mutate(
+    nchar = nchar(text),
+    # A num column should not start with any other text strings
+    num_str = text %>%
+      stri_replace_all_regex("[\\(\\)\\[\\]\\{\\}, \\*]","") %>%
+      stri_replace_all_fixed("−","-") %>%
+      stri_extract_first_regex(fp_start),
+    num = suppressWarnings(as.numeric(num_str)),
+    type = case_when(
+      !is.na(num)~"num",
+      nchar == 0 ~ "empty",
+      TRUE ~ "text"
+    ),
+    num_deci = nchar(str.right.of(num_str,".", not.found=rep("", n()))),
+    has_paren = stri_detect_fixed(text,"("),
+    has_bracket = stri_detect_fixed(text,"["),
+    has_curley = stri_detect_fixed(text,"{"),
+    # Something like (1), (5)
+    is_int_header = type == "num" & num_deci==0 & has_paren & num <= 30 & num > 0,
+    stars_str = find_stars_str(text),
+    is_panel_title = startsWith(text,"Panel") & colspan > 1,
+    paren_type = case_when(
+      has_paren ~ "(",
+      has_bracket ~ "[",
+      has_curley ~ "{",
+      TRUE ~ ""
+    )
+  )
+
+  row_df = cell_df %>%
+    group_by(row) %>%
+    summarise(
+      is_int_header_block = sum(is_int_header)>0 & sum(!is_int_header==0),
+      is_empty_row = all(type=="empty"),
+      is_num_row = any(type=="num"),
+      rowname = case_when(
+        first(type)== "text" ~ first(text),
+        first(type)=="empty" & nth(type,2,default="") == "text" ~ nth(text,2),
+        TRUE ~ ""
+      ),
+      .has_panel_title = any(is_panel_title),
+      .text = paste0(text, collapse=""),
+
+    ) %>%
+    ungroup() %>%
+    mutate(
+      num_row_block = rle_block( (is_num_row | is_empty_row) + is_int_header_block, ignore_val=FALSE),
+      panel_num = rle_block(.has_panel_title)-1
+    )
+
+  panel_df = filter(row_df, .has_panel_title) %>%
+    select(panel_title=.text, panel_num)
+
+  cols = setdiff(colnames(row_df),c(".text",".has_panel_title"))
+  row_df = row_df[,cols]
+
+  cell_df = left_join(cell_df, select(row_df, row, num_row_block, panel_num), by="row")
+
+  list(cell_df=cell_df, row_df=row_df, panel_df=panel_df)
+
+}
+
+# Convert cell_df to a simple HTML table
+cell_df_to_tabhtml = function(cell_df) {
+
+  tr_df = cell_df %>%
+    group_by(row) %>%
+    summarize(
+      html = paste0('<tr data-row="', first(row),'">\n',
+                    paste0('  <td data-row="', row,'" data-col="',col,'">',text, "</td>", collapse = "\n"),
+                    '\n</tr>'
+      )
+    )
+  tabhtml = paste0("<table>\n",paste0(tr_df$html, collapse="\n"),"</table>")
+  tabhtml
 }
 

@@ -1,3 +1,9 @@
+save_rds_create_dir = function(x, file) {
+  dir = dirname(file)
+  if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
+  saveRDS(x, file)
+}
+
 my_rank = function(x) {
   restore.point("my_rank")
   if (length(x)==0) return(integer(0))

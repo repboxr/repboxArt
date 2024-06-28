@@ -18,13 +18,13 @@ example = function() {
   #reg_df = tab_df$coef_df[[7]]
 }
 
-art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list()) {
+art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(), route=get_art_route()) {
   restore.point("art_tabs_to_regs")
   tab_df = art_load_tabs(project_dir)
   #tab_df = tab_df[4,]
   if (NROW(tab_df)==0) return(NULL)
 
-  parcels = load_parcels(project_dir, "art_tab_cell",parcels = parcels)
+  parcels = load_art_route_parcels(project_dir, "art_tab_cell",route, parcels = parcels)
 
   #cell_df = tab_df_to_cell_df(tab_df)
   cell_df = parcels$art_tab_cell$art_tab_cell
@@ -126,10 +126,10 @@ art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(
 
 
   # Save in internal format
-  saveRDS(reg_df, file.path(project_dir,"art","reg_df.Rds"))
+  saveRDS(reg_df, file.path(project_dir,"art/routes",route,"reg_df.Rds"))
 
   # Save in repdb format
-  new_parcels = art_reg_save_repdb(project_dir, reg_df, stat_df, cell_df)
+  new_parcels = art_reg_save_repdb(project_dir, reg_df, stat_df, cell_df, route=route)
 
   parcels[names(new_parcels)] = new_parcels
 
@@ -273,7 +273,7 @@ make_art_small_reg = function(reg_df) {
   small_reg_df
 }
 
-art_reg_save_repdb = function(project_dir, reg_df, stat_df, cell_df) {
+art_reg_save_repdb = function(project_dir, reg_df, stat_df, cell_df, route=get_art_route()) {
   restore.point("art_reg_save_repdb")
   library(repboxDB)
   specs = repdb_load_specs(libs="repboxArt")
@@ -335,7 +335,7 @@ art_reg_save_repdb = function(project_dir, reg_df, stat_df, cell_df) {
   parcels$art_reg$art_regstat = stat_df
 
 
-  dir = file.path(project_dir, "repdb")
+  dir = file.path(project_dir,"art","routes", route, "repdb")
   repdb_save_parcels(parcels, dir)
 
   #rstudioapi::filesPaneNavigate(file.path(project_dir, "repdb"))

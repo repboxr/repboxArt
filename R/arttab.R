@@ -94,83 +94,6 @@ art_extract_raw_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE) {
   invisible(tab_df)
 }
 
-art_html_tab_standardize = function(tab_df) {
-  restore.point("art_html_tab_standardize")
-  tab_df$row_df = tab_df$panel_df = vector("list",NROW(tab_df))
-
-  for (i in seq_rows(tab_df)) {
-    res = html_tab_cell_row_panel_df(tab_df[i,])
-    tab_df$cell_df[[i]] = res$cell_df
-    tab_df$row_df[[i]] = res$row_df
-    tab_df$panel_df[[i]] = res$panel_df
-  }
-  tab_df
-}
-
-# Normalize cell_df for Table from HTML
-html_tab_cell_row_panel_df = function(tab) {
-  restore.point("html_tab_cell_row_panel_df")
-  # We only extract number if it is at the beginning
-  # of in a bracket
-  fp = "([+\\-−]|([+\\-−] ))?(([0-9]*(,[0-9][0-9][0-9])+|([0-9]+))([.][0-9]*)?|[.][0-9]+)"
-  fp_start = paste0("^", fp)
-
-  cell_df = cell_df %>% mutate(
-    nchar = nchar(text),
-    # A num column should not start with any other text strings
-    num_str = text %>%
-      stri_replace_all_regex("[\\(\\)\\[\\]\\{\\}, \\*]","") %>%
-      stri_replace_all_fixed("−","-") %>%
-      stri_extract_first_regex(fp_start),
-    num = suppressWarnings(as.numeric(num_str)),
-    type = case_when(
-      !is.na(num)~"num",
-      nchar == 0 ~ "empty",
-      TRUE ~ "text"
-    ),
-    num_deci = nchar(str.right.of(num_str,".", not.found=rep("", n()))),
-    has_paren = stri_detect_fixed(text,"("),
-    has_bracket = stri_detect_fixed(text,"["),
-    has_curley = stri_detect_fixed(text,"{"),
-    # Something like (1), (5)
-    is_int_header = type == "num" & num_deci==0 & has_paren & num <= 30 & num > 0,
-    stars_str = find_stars_str(text),
-    is_panel_title = startsWith(text,"Panel") & colspan > 1
-  )
-
-  row_df = cell_df %>%
-    group_by(row) %>%
-    summarise(
-      is_int_header_block = sum(is_int_header)>0 & sum(!is_int_header==0),
-      is_empty_row = all(type=="empty"),
-      is_num_row = any(type=="num"),
-      rowname = case_when(
-        first(type)== "text" ~ first(text),
-        first(type)=="empty" & nth(type,2,default="") == "text" ~ nth(text,2),
-        TRUE ~ ""
-      ),
-      .has_panel_title = any(is_panel_title),
-      .text = paste0(text, collapse=""),
-
-    ) %>%
-    ungroup() %>%
-    mutate(
-      num_row_block = rle_block( (is_num_row | is_empty_row) + is_int_header_block, ignore_val=FALSE),
-      panel_num = rle_block(.has_panel_title)-1
-    )
-
-  panel_df = filter(row_df, .has_panel_title) %>%
-    select(panel_title=.text, panel_num)
-
-  cols = setdiff(colnames(row_df),c(".text",".has_panel_title"))
-  row_df = row_df[,cols]
-
-  cell_df = left_join(cell_df, select(row_df, row, num_row_block), by="row")
-
-  list(cell_df=cell_df, row_df=row_df, panel_df=panel_df)
-
-}
-
 # Create cell_df for Table from PDF
 # tp_df has extracted numbers, but we want to recreate
 # as close as possible also the text cells
@@ -638,7 +561,7 @@ find_stars_str = function(big_str) {
   as.vector(stringi::stri_match_first_regex(right_str, "[*]+")) %>% na.val("")
 }
 
-art_save_repdb_tab = function(project_dir, tab_df) {
+art_save_repdb_tab = function(project_dir, tab_df, do_save=TRUE, route=get_art_route()) {
   restore.point("save_repdb_art_tab")
   library(repboxDB)
 
@@ -665,7 +588,9 @@ art_save_repdb_tab = function(project_dir, tab_df) {
 
 
   parcels = list(art_tab = list(art_tab=tab_df), art_tab_cell=list(art_tab_cell=cell_df), art_tab_source = list(art_tab_source=tab_df))
-  repdb_save_parcels(parcels, file.path(project_dir, "repdb"))
+  if (do_save) {
+    repdb_save_parcels(parcels, file.path(project_dir,"art", "routes", route, "repdb"))
+  }
 
   parcels
 

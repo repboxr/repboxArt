@@ -17,7 +17,7 @@ example = function() {
 
 
 
-art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, opts), verbose=TRUE, opts=repbox_art_opts()) {
+art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, opts), verbose=TRUE, opts=repbox_art_opts(), route = "pdf") {
   restore.point("art_pdf_pages_to_parts")
   pages_file = file.path(project_dir, "art","txt_pages.Rds")
   if (!file.exists(pages_file)) return(NULL)
@@ -101,9 +101,10 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
     } else {
       tab_parts$url_org_tab = ""
     }
-    saveRDS(tab_parts, file.path(project_dir, "art", "arttab.Rds"))
+    save_rds_create_dir(tab_parts, file.path(project_dir, "art/routes/pdf", "arttab.Rds"))
+    #saveRDS(tab_parts, file.path(project_dir, "art", "arttab.Rds"))
 
-    parcels = art_save_repdb_tab(project_dir, tab_parts)
+    parcels = art_save_repdb_tab(project_dir, tab_parts, route=route)
 
   } else {
     if (verbose) cat("\n    No tables found in the article.\n")
@@ -145,7 +146,8 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
 
   # Now transform to parts df
   parts_df = line_df_to_parts_df(line_df, fn_df)
-  saveRDS(parts_df, file.path(project_dir, "art", "text_parts.Rds"))
+  save_rds_create_dir(parts_df, file.path(project_dir, "art/routes/pdf/", "text_parts.Rds"))
+  #saveRDS(parts_df, file.path(project_dir, "art", "text_parts.Rds"))
 
   parcels
 

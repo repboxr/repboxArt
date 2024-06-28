@@ -1,15 +1,20 @@
 example = function() {
   library(repboxRun)
   library(repboxArt)
-  #project_dir = "/home/rstudio/repbox/projects_reg/testart"
-  project_dir = "~/repbox/projects_gha/jeea_19_5_11"
+  library(repboxEJD)
 
+  artid = "jeea_16_2_7"
+  projects.dir = "~/repbox/projects_test"
+  #projects.dir = "~/repbox/projects_gha"
+  #repbox_init_ejd_project(artid=artid, projects.dir=projects.dir)
 
+  project_dir = paste0("~/repbox/projects_test/", artid)
   steps = repbox_steps_from(art=TRUE, reproduction=FALSE)
-  steps = repbox_steps_from(art=TRUE, reproduction=FALSE, map=TRUE)
+
 
   repboxRun::repbox_run_project(project_dir, lang="stata", steps=steps)
 
+  route_art_tab_finish_route(project_dir, "pdf")
   rstudioapi::filesPaneNavigate(project_dir)
 
 
@@ -24,20 +29,32 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
 
   parcels = list()
 
+  existing_routes = NULL
   if (art_has_pdf(project_dir)) {
     cat("\n  1. Transform pdf and extract tables...")
+    set_art_route("pdf")
+    existing_routes = c(existing_routes, "pdf")
     art_pdf_to_txt_pages(project_dir, overwrite = overwrite)
     art_extract_raw_tabs(project_dir, overwrite = overwrite)
     parcels = art_pdf_pages_to_parts(project_dir, opts=opts)
   }
   if (art_has_html(project_dir)) {
     cat("\n  1. Transform html and extract tables...")
+    set_art_route("html")
+    existing_routes = c("html", existing_routes)
     art_html_to_parts(project_dir)
   }
   if (!art_has_pdf(project_dir) & !art_has_html(project_dir)) {
     cat("\n No PDF or HTML file of article exists.")
     return(invisible())
   }
+
+  route = intersect(opts$preferred_route,existing_routes)[1]
+  if (length(route)==0) {
+    route = existing_routes[1]
+  }
+  set_art_route(route)
+
   cat("\n  2. Extract regression results from tables...")
   art_extract_paren_type_from_tab_notes(project_dir)
 
@@ -45,11 +62,11 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
   cat("\n  3. Extract key phrases and map to references to figures, tables and columns...")
   art_phrase_analysis(project_dir)
 
+  activate_art_route(project_dir,route)
 
   cat("\nDone with", project_dir,"\n")
   invisible(parcels)
 }
-
 
 
 art_has_html = function(project_dir) {
