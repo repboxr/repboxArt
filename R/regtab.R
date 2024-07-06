@@ -227,7 +227,10 @@ tab_df_to_row_df = function(tab_df) {
 
 cell_df_find_num_paren_pairs = function(cell_df) {
   restore.point("cell_df_find_num_paren_pairs")
-  if (NROW(cell_df)==0) return(NULL)
+  if (NROW(cell_df)==0 | !is.data.frame(cell_df)) return(NULL)
+
+  # cell_df = cell_df %>% filter(tabid=="D4", row>=15, col==9)
+
   num_cell_df = filter(cell_df, type=="num") %>%
     mutate(has_paren = paren_type %in% c("(","["))
 
@@ -239,6 +242,27 @@ cell_df_find_num_paren_pairs = function(cell_df) {
       paren_pos = "below"
     ) %>%
     filter(is_pair)
+
+  # paren are below but with an empty cell inbetween
+  # happens often e.g. in Restud tables when variable labels span more than
+  # one row
+  # currently we don't check whether it is indeed an empty cell inbetween
+  # but just that it is not a number, somehow the provided cell_df
+  # has already its text fields removed
+  # need to update, by adding is_empty_below to cell_df
+  pair1B = num_cell_df %>%
+    group_by(tabid, col, panel_num) %>%
+    mutate(
+      is_pair = is.true(
+        lead(row)==(row+2) & (!has_paren) & (lead(has_paren)) &
+        (num_deci==0 | lead(num_deci)>0)
+      ),
+      .PAREN.ROW = lead(.ROW),
+      paren_pos = "below"
+    ) %>%
+    filter(is_pair) %>%
+    anti_join(pair1, by="cellid")
+
 
   pair2 = num_cell_df %>%
     group_by(tabid, row, panel_num, num_row_block) %>%

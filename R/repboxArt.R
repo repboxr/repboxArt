@@ -9,10 +9,14 @@ example = function() {
   #repbox_init_ejd_project(artid=artid, projects.dir=projects.dir)
 
   project_dir = paste0("~/repbox/projects_test/", artid)
+
+  project_dir = "/home/rstudio/repbox/projects_gha/restud_86_2_1"
+
   steps = repbox_steps_from(art=TRUE, reproduction=FALSE)
 
+  art_opts = repbox_art_opts(overwrite = !TRUE)
 
-  repboxRun::repbox_run_project(project_dir, lang="stata", steps=steps)
+  repboxRun::repbox_run_project(project_dir, lang="stata", steps=steps, opts=repbox_run_opts(art_opts = art_opts))
 
   route_art_tab_finish_route(project_dir, "pdf")
   rstudioapi::filesPaneNavigate(project_dir)
@@ -35,8 +39,8 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
     set_art_route("pdf")
     existing_routes = c(existing_routes, "pdf")
     art_pdf_to_txt_pages(project_dir, overwrite = overwrite)
-    art_extract_raw_tabs(project_dir, overwrite = overwrite)
-    parcels = art_pdf_pages_to_parts(project_dir, opts=opts)
+    parcels = art_extract_pdf_tabs(project_dir, overwrite = overwrite)
+    art_pdf_pages_to_parts(project_dir, opts=opts)
   }
   if (art_has_html(project_dir)) {
     cat("\n  1. Transform html and extract tables...")
@@ -49,9 +53,11 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
     return(invisible())
   }
 
-  route = intersect(opts$preferred_route,existing_routes)[1]
+  route = intersect(opts$preferred_route,existing_routes)
   if (length(route)==0) {
     route = existing_routes[1]
+  } else {
+    route = route[1]
   }
   set_art_route(route)
 
