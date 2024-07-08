@@ -59,7 +59,7 @@ art_extract_pdf_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, pag
   tab_df$pdf_file = page_df$source_file[tab_df$start_page]
   tab_df$html_file = ""
   if (!is_empty(pdf_url)) {
-    tab_df$url_org_tab = paste0(pdf_url,"#page=", tab_parts$start_page)
+    tab_df$url_org_tab = paste0(pdf_url,"#page=", tab_df$start_page)
   } else {
     tab_df$url_org_tab = ""
   }
