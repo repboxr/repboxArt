@@ -14,13 +14,19 @@ example = function() {
 
   steps = repbox_steps_from(art=TRUE, reproduction=FALSE)
 
-  art_opts = repbox_art_opts(overwrite = !TRUE)
+  art_opts = repbox_art_opts(overwrite = TRUE)
 
   repboxRun::repbox_run_project(project_dir, lang="stata", steps=steps, opts=repbox_run_opts(art_opts = art_opts))
 
-  route_art_tab_finish_route(project_dir, "pdf")
+  #route_art_tab_finish_route(project_dir, "pdf", opts=art_opts)
   rstudioapi::filesPaneNavigate(project_dir)
 
+  cell_df = get_art_tab_cell_with_reg_info(project_dir)
+
+  cell_df = cell_df %>% filter(tabid=="8")
+  names(cell_df)
+  show_cell_df_html(cell_df, color_by="regid")
+  show_cell_df_html(cell_df, color_by="num_row_block")
 
 }
 

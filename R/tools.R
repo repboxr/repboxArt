@@ -41,6 +41,20 @@ rle_block = function(x, ignore_val=NULL) {
   rep(block_vals, rle$lengths)
 }
 
+rle_cummax_block = function(x, ignore_val=NULL) {
+  rle = rle(x)
+  block_vals = seq_along(rle$values)
+  if (length(ignore_val)>0) {
+    zero_rows = rle$values %in% ignore_val
+    block_vals[zero_rows] = 0
+    uni = unique(block_vals[!zero_rows])
+    block_vals[!zero_rows] = match(block_vals[!zero_rows],uni)
+    block_vals = cummax(block_vals)
+  }
+  rep(block_vals, rle$lengths)
+}
+
+
 first.non.null = function(...) {
   args = list(...)
   for (val in args) {

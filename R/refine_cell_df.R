@@ -61,8 +61,8 @@ refine_cell_df_and_add_panel_info = function(cell_df) {
     ) %>%
     ungroup() %>%
     mutate(
-      num_row_block = rle_block( (is_num_row | is_empty_row) + is_int_header_block, ignore_val=FALSE),
-      panel_num = rle_block(.has_panel_title)-1
+      num_row_block = rle_block( (is_num_row | is_empty_row) + is_int_header_block, ignore_val=0),
+      panel_num = rle_cummax_block(.has_panel_title, ignore_val=FALSE)
     )
 
   panel_df = filter(row_df, .has_panel_title) %>%
@@ -71,6 +71,7 @@ refine_cell_df_and_add_panel_info = function(cell_df) {
   cols = setdiff(colnames(row_df),c(".text",".has_panel_title"))
   row_df = row_df[,cols]
 
+  cell_df = remove.cols(cell_df, c("num_row_block","panel_num"))
   cell_df = left_join(cell_df, select(row_df, row, num_row_block, panel_num), by="row")
 
   list(cell_df=cell_df, row_df=row_df, panel_df=panel_df)

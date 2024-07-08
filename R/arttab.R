@@ -33,6 +33,8 @@ art_extract_pdf_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, pag
 
   tab_df = ExtractSciTab::refine_raw_tab(raw)
 
+  #show_cell_df_html(tab_df$cell_df[[2]])
+
   # We overwrite the panel and num_row_block definitions
   # to be more aligned with other table extraction methods
   # e.g. from HTML or later using AI

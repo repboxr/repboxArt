@@ -332,17 +332,36 @@ html_tab_cell_row_panel_df = function(tab) {
 }
 
 # Convert cell_df to a simple HTML table
-cell_df_to_tabhtml = function(cell_df) {
+cell_df_to_tabhtml = function(cell_df, color_by=NULL) {
+
+  if (!is.null(color_by)) {
+    val = cell_df[[color_by]]
+    vals = unique(val)
+    color_ind = match(cell_df[[color_by]], vals)
+    colors = repboxHtml::cmd_ind_colors(length(vals))
+
+    color = colors[color_ind]
+    color[is.na(val)] = "#efefef"
+    cell_df$td_style = paste0(' style = "background-color: ', color,';"')
+  } else {
+    cell_df$td_style = ""
+  }
 
   tr_df = cell_df %>%
     group_by(row) %>%
     summarize(
       html = paste0('<tr data-row="', first(row),'">\n',
-                    paste0('  <td data-row="', row,'" data-col="',col,'">',text, "</td>", collapse = "\n"),
-                    '\n</tr>'
-      )
+                    paste0('  <td data-row="', row,'" data-col="',col,'"', td_style,ifelse(is.true(colspan>1),paste0(' colspan="', colspan,'"'), ''), '>',text,                                   "</td>", collapse = "\n"),
+                    '\n</tr>')
     )
   tabhtml = paste0("<table>\n",paste0(tr_df$html, collapse="\n"),"</table>")
   tabhtml
 }
 
+show_cell_df_html = function(cell_df, color_by=NULL, temp_dir = "~/repbox/temp") {
+  html = cell_df_to_tabhtml(cell_df, color_by = color_by)
+  file = paste0(temp_dir,"/temp_table.html")
+  writeLines(html, file)
+  browseURL(file)
+
+}

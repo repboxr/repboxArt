@@ -46,7 +46,7 @@ load_art_route_parcels = function(project_dir, parcel_names, route=get_art_route
   parcels
 }
 
-route_art_tab_finish_route = function(project_dir, route, parcels=list()) {
+route_art_tab_finish_route = function(project_dir, route, parcels=list(), opts=repbox_art_opts()) {
   restore.point("route_art_tab_finish_route")
   set_art_route(route)
 

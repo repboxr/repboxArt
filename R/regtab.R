@@ -28,6 +28,12 @@ art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(
 
   #cell_df = tab_df_to_cell_df(tab_df)
   cell_df = parcels$art_tab_cell$art_tab_cell
+
+  # cell_df = cell_df %>% filter(tabid=="2")
+
+  # res = refine_cell_df_and_add_panel_info(cell_df)
+  # temp = res$cell_df
+
   cell_df$.ROW = seq_rows(cell_df)
   row_df = tab_df_to_row_df(tab_df)
 
@@ -273,7 +279,7 @@ cell_df_find_num_paren_pairs = function(cell_df) {
     ) %>%
     filter(is_pair)
 
-  pair = bind_rows(pair1, pair2)
+  pair = bind_rows(pair1,pair1B, pair2)
 
   coef_part = select(pair, tabid, panel_num, num_row_block, paren_pos, row, col, coef_str=text, coef_num_str=num_str, coef=num, coef_num_deci=num_deci, coef_stars_str=stars_str)
 
@@ -406,4 +412,20 @@ old.match_stat_to_reg_df = function(reg_df, cell_df, stats_df, key) {
 
 
   reg_df
+}
+
+# Is helpful, at least for debugging
+get_art_tab_cell_with_reg_info = function(project_dir) {
+  parcels = repdb_load_parcels(project_dir, c("art_tab_cell", "art_reg"))
+  cell_df = parcels$art_tab_cell$art_tab_cell
+  coef_df = parcels$art_reg$art_regcoef
+
+  names(coef_df)
+  cell_df = cell_df %>%
+    left_join_overwrite( select(coef_df, coef_regid=regid, cellid=coef_cellid), by="cellid") %>%
+    left_join_overwrite( select(coef_df, paren_regid=regid, cellid=paren_cellid), by="cellid") %>%
+    mutate(
+      regid = coalesce(coef_regid, paren_regid)
+    )
+  cell_df
 }
