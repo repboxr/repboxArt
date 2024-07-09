@@ -35,6 +35,9 @@ art_html_to_parts = function(project_dir) {
     # restud, qje, jeea have all very similar HTML format
     res = restud_parse_html(project_dir, html, html.file, journ)
   }
+
+  if (is.null(res)) return(list())
+
   text_df = res$text_df; tab_df = res$tab_df
 
   # Some general adaptions

@@ -52,8 +52,12 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
   if (art_has_html(project_dir) & "html" %in% opts$create_routes) {
     cat("\n  1. Transform html and extract tables...")
     set_art_route("html")
-    existing_routes = c("html", existing_routes)
-    art_html_to_parts(project_dir)
+    res = art_html_to_parts(project_dir)
+    if (length(res)>0) {
+      existing_routes = c("html", existing_routes)
+    } else {
+      cat("\nArticle HTML for ", project_dir, " seems invalid.\n")
+    }
   }
   if (!art_has_pdf(project_dir) & !art_has_html(project_dir)) {
     cat("\n No PDF or HTML file of article exists.")

@@ -5,6 +5,9 @@ ms_parse_html = function(project_dir, html = rvest::read_html(html.file), html.f
   library(rvest)
   library(xml2)
   body = html %>% rvest::html_node(".article__body")
+
+
+
   if (journ=="ms") {
     nodes = body %>% rvest::html_elements(".hlFld-Abstract, .article-section__title, figure, .tableWrapper, div.hlFld-Fulltext p, .fn")
   }
@@ -27,6 +30,10 @@ ms_parse_html = function(project_dir, html = rvest::read_html(html.file), html.f
         TRUE ~ "unknown"
       )
     )
+
+  # Check wrong / empty HTML
+  if (NROW(df)<=4) return(NULL)
+  if (!any(df$type=="p")) return(NULL)
 
   # Map footnotes
 
