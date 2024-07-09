@@ -105,6 +105,9 @@ art_save_repdb_tab = function(project_dir, tab_df, do_save=TRUE, route=get_art_r
   restore.point("save_repdb_art_tab")
   library(repboxDB)
 
+
+  if (NROW(tab_df)==0) return(list())
+
   artid = basename(project_dir)
   tab_df = tab_df %>% mutate(
     artid = artid,

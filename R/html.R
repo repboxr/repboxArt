@@ -23,10 +23,14 @@ art_html_to_parts = function(project_dir) {
   html.file = art_get_html_files(project_dir)[1]
   html = rvest::read_html(html.file)
 
-  if (journ=="jpe") {
+  if (journ=="jpe" | journ=="jole") {
     res = jpe_parse_html(project_dir, html, html.file, journ)
   } else if (journ=="restat") {
     res = restat_parse_html(project_dir, html, html.file, journ)
+  } else if (journ=="ecta") {
+    res = ecta_parse_html(project_dir, html, html.file, journ)
+  } else if (journ=="ms") {
+    res = ms_parse_html(project_dir, html, html.file, journ)
   } else {
     # restud, qje, jeea have all very similar HTML format
     res = restud_parse_html(project_dir, html, html.file, journ)

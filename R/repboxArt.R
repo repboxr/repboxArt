@@ -32,6 +32,7 @@ example = function() {
 
 art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_opts(overwrite=overwrite)) {
   restore.point("art_update_project")
+  opts$project_dir = project_dir
   repbox_set_current_project_dir(project_dir)
   overwrite = opts$overwrite
   art_ensure_correct_dirs(project_dir)
@@ -40,7 +41,7 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
   parcels = list()
 
   existing_routes = NULL
-  if (art_has_pdf(project_dir)) {
+  if (art_has_pdf(project_dir) & "pdf" %in% opts$create_routes) {
     cat("\n  1. Transform pdf and extract tables...")
     set_art_route("pdf")
     existing_routes = c(existing_routes, "pdf")
@@ -48,7 +49,7 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
     parcels = art_extract_pdf_tabs(project_dir, overwrite = overwrite)
     art_pdf_pages_to_parts(project_dir, opts=opts)
   }
-  if (art_has_html(project_dir)) {
+  if (art_has_html(project_dir) & "html" %in% opts$create_routes) {
     cat("\n  1. Transform html and extract tables...")
     set_art_route("html")
     existing_routes = c("html", existing_routes)
@@ -56,7 +57,11 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
   }
   if (!art_has_pdf(project_dir) & !art_has_html(project_dir)) {
     cat("\n No PDF or HTML file of article exists.")
-    return(invisible())
+    return(invisible(list()))
+  }
+  if (length(existing_routes)==0) {
+    cat("\n No PDF or HTML file of article used.")
+    return(invisible(list()))
   }
 
   route = intersect(opts$preferred_route,existing_routes)

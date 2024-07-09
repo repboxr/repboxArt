@@ -43,7 +43,7 @@ art_pdf_to_txt_pages = function(project_dir, overwrite = FALSE, save_txt_file=TR
 
 
   saveRDS(page_df, out.file)
-  if (save_txt_file) {
+  if (save_txt_file & NROW(page_df)>0) {
     writeLines(page_df$txt, file.path(project_dir,"art","art.txt"))
   }
   invisible(page_df)

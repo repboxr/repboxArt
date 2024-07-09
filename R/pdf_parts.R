@@ -247,7 +247,7 @@ line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose
     } else {
       if (!all(cand_num == seq_along(cand_num))) {
         line_df$trim_txt[cand_lines]
-        repbox_problem("Could not identify unique section starts. Need to augment section detection code.","art_identify_sections",opts$detection_problem)
+        repbox_problem("Could not identify unique section starts. Need to augment section detection code.","art_identify_sections", ,opts$detection_problem, project_dir = opts$project_dir)
         can_num = cand_lines = NULL
       }
       line_df$type[cand_lines] = "sec1"
@@ -284,7 +284,7 @@ line_df_find_sections = function(line_df, journ,opts, just_cand = FALSE, verbose
 
 
   } else {
-    repbox_problem(paste0("Find sections not yet implemented for journal ", journ),"art_journ_not_impl_find_sections", opts$not_implemented_action)
+    repbox_problem(paste0("Find sections not yet implemented for journal ", journ),"art_journ_not_impl_find_sections", opts$not_implemented_action, project_dir = opts$project_dir)
   }
 
   if (just_cand){
