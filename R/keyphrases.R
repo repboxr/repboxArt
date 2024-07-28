@@ -72,6 +72,13 @@ art_tab_phrase_analysis = function(project_dir, tab_df=art_load_tab_df(project_d
 
   n = NROW(tab_df)
   if (n==0) return(NULL)
+
+  # Need to replace NA such that subsequent analysis works
+  tab_df = tab_df %>%
+    mutate(across(c(tabtitle, tabnotes, tabsource),~na.val(.,""))) %>%
+    mutate(across(c(nchar_title, nchar_notes, nchar_tabsource),~na.val(.,0)))
+
+
   txt = merge.lines(c(tab_df$tabtitle, tab_df$tabnotes, tab_df$tabsource))
   parts_loc = text_parts_to_loc(nchars=c(tab_df$nchar_title,tab_df$nchar_notes, tab_df$nchar_tabsource))
   parts_loc$tabrow = c(1:n,1:n,1:n)
