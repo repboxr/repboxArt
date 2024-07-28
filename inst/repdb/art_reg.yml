@@ -27,11 +27,46 @@ fields:
     type: int
 
   regcol:
+    type: int
     descr: |
       The column the regression is found in the table panel.
       We count only columns that contain regressions.
 
+
+  header_col:
+    type: int
+    decr: |
+      Column indicated by a header row with labels
+      (1) (2) (3) (4) etc
+      If exists should be identical to regcol if the
+      table was well parsed
+
+  header_row:
+    type: int
+    decr: |
+      The row in which the (1) (2) (3) header is found
+
+  coef_col:
+    type: int
+    descr: |
+      The actual table column of the regression coefficients,
+      will typically not start with 1 as in column 1 we have the
+      variable labels
+
+  paren_col:
+    type: int
+    descr: |
+      The actual table column of the parenthesis values (se),
+      if parenthesis are below coefficients (default) it is the same
+      as coef_col.
+
   ncoef:
     descr: |
       The number of shown regression coefficients.
+    type: int
+
+  first_coef_row:
+    type: int
+
+  last_coef_row:
     type: int

@@ -5,7 +5,7 @@ example = function() {
 
   project_dir = "~/repbox/projects_reg/aejpol_3_4_8"
   project_dir = "~/repbox/projects_reg/aejapp_3_2_2"
-  #project_dir = "~/repbox/projects_reg/aejapp_3_1_3"
+  project_dir = "~/repbox/projects_gha/aejapp_1_3_6"
 
   opts = repbox_art_opts(single_line_regs = tibble(tabid=c("2","3")))
   reg_df = art_tabs_to_regs(project_dir, opts)
@@ -107,6 +107,7 @@ art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(
   # Nest coef_df and create helper cols
   reg_df = pair_df %>%
     group_by(tabid, panel_num, num_row_block, reg_row_block, col, paren_pos) %>%
+    arrange(col) %>% # Added to have better order
     mutate(
       first_coef_row = min(row),
       last_coef_row = max(row),
@@ -121,13 +122,49 @@ art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(
   # Add regcol and regid
   reg_df$regid = seq_rows(reg_df)
 
-  cols = sort(unique(reg_df$col))
-  reg_df$regcol = match(reg_df$col, cols)
+  # Update: regcol shall start with 1 for the first regression
+  # column in the table
+  reg_df = reg_df %>%
+    group_by(tabid) %>%
+    mutate(
+      regcol = match(col, sort(unique(col))),
+      coef_col = col
+    )
+
+  # Update try to find title line numbers (1), (2), (3)
+  # etc..
+  header_df = cell_df %>%
+    mutate(is_header_cell = is.true(num==round(num) & num < 20) & paren_type == "(") %>%
+    group_by(tabid, row) %>%
+    filter(
+     sum(is_header_cell) >= 2
+    ) %>%
+    filter(is_header_cell) %>%
+    filter(
+      all(diff(num)==1)
+    ) %>%
+    mutate(header_col_count = n()) %>%
+    ungroup() %>%
+    transmute(tabid=tabid, col=col, header_row = row, header_col_count=header_col_count, header_col = as.integer(num))
+
+  # Merge header_df with reg_df
+  # A table with different panels may have different
+  # header numbers in different rows
+  # Take the closest ones
+  reg_df = left_join(reg_df, header_df, by=c("tabid","col")) %>%
+    mutate(header_above = first_coef_row-header_row) %>%
+    filter(header_above > 0) %>%
+    group_by(tabid, regid, header_row) %>%
+    arrange(desc(header_row)) %>%
+    slice(1) %>%
+    ungroup()
+
+
 
   stat_df = art_extract_regstats(cell_df, row_df, reg_df)
 
 
-  cols = c("tabid", "panel_num","regid", "regcol", "paren_pos", "ncoef",  "coef_df", "col", "paren_col")
+  cols = c("tabid", "panel_num","regid", "regcol", "paren_pos", "ncoef",  "coef_df","col", "coef_col", "paren_col","header_col","header_row","first_coef_row","last_coef_row")
   reg_df = reg_df[,cols]
 
 

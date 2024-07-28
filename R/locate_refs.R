@@ -208,6 +208,7 @@ loc_to_df = function(txt,loc, add.left=0, add.right=0) {
 
 
 map_loc_to_parent_loc = function(loc, ploc, just.start=TRUE) {
+  restore.point("map_loc_to_parent_loc")
   if (just.start) {
     findInterval(loc$start, ploc$start)
   } else {

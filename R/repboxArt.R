@@ -3,18 +3,18 @@ example = function() {
   library(repboxArt)
   library(repboxEJD)
 
-  artid = "jeea_16_2_7"
+  artid = "aejapp_1_3_6"
   projects.dir = "~/repbox/projects_test"
   #projects.dir = "~/repbox/projects_gha"
   #repbox_init_ejd_project(artid=artid, projects.dir=projects.dir)
 
   project_dir = paste0("~/repbox/projects_test/", artid)
 
-  project_dir = "/home/rstudio/repbox/projects_gha/restud_86_2_1"
+  project_dir = "/home/rstudio/repbox/projects_gha/jeea_18_2_13"
 
   steps = repbox_steps_from(art=TRUE, reproduction=FALSE)
 
-  art_opts = repbox_art_opts(overwrite = TRUE)
+  art_opts = repbox_art_opts(overwrite = FALSE)
 
   repboxRun::repbox_run_project(project_dir, lang="stata", steps=steps, opts=repbox_run_opts(art_opts = art_opts))
 
