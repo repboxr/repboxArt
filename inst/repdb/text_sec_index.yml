@@ -1,0 +1,28 @@
+# Fields with one entry per regression
+name: text_sec_index
+descr:
+
+unique_index:
+
+fields:
+  artid:
+
+  doc:
+
+  sec1:
+    descr: Number of main section
+    type: num
+
+  first_type:
+    descr:
+
+  title:
+    descr:
+
+  nchar:
+    descr:
+    type: int
+
+  nparts:
+    descr:
+    type: int

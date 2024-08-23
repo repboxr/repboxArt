@@ -1,0 +1,37 @@
+# Fields with one entry per regression
+
+name: text_part
+
+descr: |
+  Parts of the article text
+
+unique_index:
+
+
+fields:
+  artid:
+
+  doc:
+    descr: |
+      The document: "art","app1","app2" etc
+  type:
+    descr:
+
+  text:
+    descr:
+
+  sec1:
+    descr:
+    type: num
+
+  type_counter:
+    descr:
+    type: num
+
+  partind:
+    descr:
+    type: int
+
+  nchar:
+    descr:
+    type: int

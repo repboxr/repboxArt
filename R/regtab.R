@@ -153,7 +153,7 @@ art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(
   # Take the closest ones
   reg_df = left_join(reg_df, header_df, by=c("tabid","col")) %>%
     mutate(header_above = first_coef_row-header_row) %>%
-    filter(header_above > 0) %>%
+    filter(!is.true(header_above < 0)) %>%
     group_by(tabid, regid, header_row) %>%
     arrange(desc(header_row)) %>%
     slice(1) %>%
