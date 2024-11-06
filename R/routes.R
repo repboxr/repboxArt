@@ -24,6 +24,7 @@ set_art_route = function(route) {
 
 # Copy data from route to main folders
 activate_art_route = function(project_dir, route)  {
+  restore.point("activate_art_route")
   repdb_files = list.files(file.path(project_dir, "art","routes", route, "repdb"),full.names = TRUE)
   dest_dir = file.path(project_dir, "repdb")
   if (!dir.exists(dest_dir)) dir.create(dest_dir)
