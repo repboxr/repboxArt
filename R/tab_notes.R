@@ -1,4 +1,4 @@
-art_extract_paren_type_from_tab_notes = function(project_dir, tab_df=art_load_tab_df(project_dir), route=get_art_route()) {
+art_extract_paren_type_from_tab_notes = function(project_dir, tab_df=art_load_tab_df(project_dir, route=route), route=get_art_route()) {
   restore.point("art_extract_paren_type_from_tab_notes")
 
   if (is.null(tab_df)) return(tab_df)

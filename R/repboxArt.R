@@ -79,7 +79,7 @@ art_update_project = function(project_dir, overwrite = FALSE, opts = repbox_art_
   set_art_route(route)
 
   cat("\n  2. Extract regression results from tables...")
-  art_extract_paren_type_from_tab_notes(project_dir)
+  art_extract_paren_type_from_tab_notes(project_dir, route=route)
 
   parcels = art_tabs_to_regs(project_dir, opts=opts, parcels=parcels)
   cat("\n  3. Extract key phrases and map to references to figures, tables and columns...")
