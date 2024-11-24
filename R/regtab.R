@@ -20,7 +20,7 @@ example = function() {
 
 art_tabs_to_regs = function(project_dir, opts = repbox_art_opts(), parcels=list(), route=get_art_route()) {
   restore.point("art_tabs_to_regs")
-  tab_df = art_load_tabs(project_dir, route=route)
+  tab_df = art_load_tabs(project_dir)
   #tab_df = tab_df[4,]
   if (NROW(tab_df)==0) return(NULL)
 
