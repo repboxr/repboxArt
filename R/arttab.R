@@ -8,16 +8,15 @@ example = function(){
 
 art_load_tabs = function(project_dir) {
   restore.point("art_load_tabs")
+  file = file.path(get_art_route_dir(project_dir), "arttab.Rds")
+  if (file.exists(file)) return(readRDS(file))
 
-  tab.file = file.path(project_dir, "art", "arttab.Rds")
-  if (!file.exists(tab.file)) return(NULL)
-  readRDS(tab.file)
+  return(NULL)
 }
 
 art_extract_pdf_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, page_df=NULL) {
   restore.point("art_extract_tabs")
-
-  tab.file = file.path(project_dir, "art", "arttab.Rds")
+  tab.file = file.path(get_art_route_dir(project_dir), "arttab.Rds")
   if (file.exists(tab.file) & !overwrite) return(list())
 
 
@@ -64,7 +63,8 @@ art_extract_pdf_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, pag
     tab_df$url_org_tab = ""
   }
 
-  save_rds_create_dir(tab_df, file.path(project_dir, "art/routes/pdf", "arttab.Rds"))
+  file = file.path(get_art_route_dir(project_dir), "arttab.Rds")
+  save_rds_create_dir(tab_df, file)
   parcels = art_save_repdb_tab(project_dir=project_dir,tab_df = tab_df,route = "pdf")
   #saveRDS(tab_df,paste0(project_dir,"/art/arttab.Rds"))
   parcels
@@ -73,7 +73,7 @@ art_extract_pdf_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, pag
 # Extract tabs using ExtractSciTab. Later we will modify it.
 art_extract_pdf_raw_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, page_df=NULL, save=TRUE) {
   restore.point("art_extract_raw_tabs")
-  raw_file = file.path(project_dir, "art", "art_tab_raw.Rds")
+  raw_file = file.path(get_art_route_dir(project_dir), "art_tab_raw.Rds")
   if (file.exists(raw_file) & !overwrite) return(readRDS(raw_file))
 
   if (is.null(page_df)) {

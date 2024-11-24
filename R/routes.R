@@ -9,9 +9,11 @@
 # to store results of different routes and have functionality to switch the preferred route,
 # and compare routes
 
-get_art_route = function() {
+get_art_route = function(null_ok=TRUE) {
   route = getOption("repbox..art..route")
-  if (is.null(route)) stop("No active route was set for repboxArt")
+  if (!null_ok) {
+    if (is.null(route)) stop("No active route was set for repboxArt")
+  }
   route
 }
 
@@ -20,6 +22,13 @@ set_art_route = function(route) {
   invisible(route)
 }
 
+get_art_route_dir = function(project_dir, route=get_art_route()) {
+  if (is.null(route)) {
+    paste0(project_dir, "/art")
+  } else {
+    paste0(project_dir, "/art/routes/",route)
+  }
+}
 
 
 # Copy data from route to main folders

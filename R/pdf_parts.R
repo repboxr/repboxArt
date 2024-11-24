@@ -19,7 +19,7 @@ example = function() {
 
 art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, opts), verbose=TRUE, opts=repbox_art_opts(), route = "pdf") {
   restore.point("art_pdf_pages_to_parts")
-  pages_file = file.path(project_dir, "art","txt_pages.Rds")
+  pages_file = file.path( project_dir, "art","txt_pages.Rds")
   if (!file.exists(pages_file)) return(NULL)
 
 
@@ -56,7 +56,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
   line_df = line_df_find_section_cands(line_df,journ=journ, opts=opts)
 
   # Table info from ExtractSciTab
-  tab_file = file.path(project_dir, "art/routes/pdf/","arttab.Rds")
+  tab_file = file.path(get_art_route_dir(project_dir),"arttab.Rds")
   tab_parts = readRDS.or.null(tab_file)
 
   if (NROW(tab_parts)==0) {
