@@ -32,6 +32,6 @@ is_aer_pandp = function(artid) {
   str = str.right.of(str, "_")
   issue = str.left.of(str,"_") %>% as.integer()
   # Only Papers and Proceeding Issues are a problem
-  if ((vol <= 103 & issue==3) | (vol>=104 & issue==5)) return(TRUE)
+  if (isTRUE((vol <= 103 & issue==3) | (vol>=104 & issue==5))) return(TRUE)
   return(FALSE)
 }
