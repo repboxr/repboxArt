@@ -73,7 +73,7 @@ art_extract_pdf_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, pag
 # Extract tabs using ExtractSciTab. Later we will modify it.
 art_extract_pdf_raw_tabs = function(project_dir, overwrite=FALSE, by_page=FALSE, page_df=NULL, save=TRUE) {
   restore.point("art_extract_raw_tabs")
-  raw_file = file.path(get_art_route_dir(project_dir), "art_tab_raw.Rds")
+  raw_file = file.path(project_dir, "/art/art_tab_raw.Rds")
   if (file.exists(raw_file) & !overwrite) return(readRDS(raw_file))
 
   if (is.null(page_df)) {

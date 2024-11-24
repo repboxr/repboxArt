@@ -100,7 +100,7 @@ art_pdf_pages_to_parts = function(project_dir, journ = guess_journ(project_dir, 
   # Now transform to parts df
   parts_df = line_df_to_parts_df(line_df, fn_df)
   save_rds_create_dir(parts_df, file.path(project_dir, "art/routes/pdf/", "text_parts.Rds"))
-  #saveRDS(parts_df, file.path(project_dir, "art", "text_parts.Rds"))
+  saveRDS(parts_df, file.path(project_dir, "art", "text_parts.Rds"))
   invisible()
 }
 

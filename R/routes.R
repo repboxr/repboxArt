@@ -42,9 +42,6 @@ activate_art_route = function(project_dir, route)  {
   files = list.files(file.path(project_dir, "art","routes", route),full.names = TRUE,include.dirs = FALSE,recursive = FALSE)
   dest_dir = file.path(project_dir, "art")
   file.copy(files, dest_dir,overwrite = TRUE)
-
-
-
 }
 
 load_art_route_parcels = function(project_dir, parcel_names, route=get_art_route(), parcels=list()) {

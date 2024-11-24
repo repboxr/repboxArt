@@ -59,7 +59,9 @@ art_html_to_parts = function(project_dir) {
   }
 
   save_rds_create_dir(text_df, file.path(project_dir, "art/routes/html", "text_parts.Rds"))
+  save_rds_create_dir(text_df, file.path(project_dir, "art/", "text_parts.Rds"))
   save_rds_create_dir(tab_df, file.path(project_dir, "art/routes/html", "arttab.Rds"))
+  save_rds_create_dir(tab_df, file.path(project_dir, "art", "arttab.Rds"))
   writeLines(text_df$text, file.path(project_dir, "art/routes/html","art_text.txt"))
 
 

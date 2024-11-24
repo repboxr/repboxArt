@@ -1,6 +1,6 @@
 
 art_load_text_parts = function(project_dir) {
-  file = file.path(get_art_route_dir(project_dir), "art","text_parts.Rds")
+  file = file.path(get_art_route_dir(project_dir),"text_parts.Rds")
   if (!file.exists(file)) return(NULL)
   text_df = readRDS(file)
   text_df

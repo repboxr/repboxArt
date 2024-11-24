@@ -10,9 +10,9 @@ example = function() {
 
   project_dir = paste0("~/repbox/projects_test/", artid)
 
-  project_dir = "/home/rstudio/repbox/projects_gha/jeea_18_2_13"
-  project_dir = "/home/rstudio/repbox/projects_gha/aejapp_1_1_10"
-  project_dir = "/home/rstudio/repbox/projects_gha/jep_30_3_1"
+  #project_dir = "/home/rstudio/repbox/projects_gha/jeea_18_2_13"
+  #project_dir = "/home/rstudio/repbox/projects_gha/aejapp_1_1_10"
+  #project_dir = "/home/rstudio/repbox/projects_gha/jep_30_3_1"
 
   steps = repbox_steps_from(art=TRUE, reproduction=FALSE)
 
