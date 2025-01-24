@@ -103,7 +103,8 @@ ecta_parse_html_table = function(node, tab_counter) {
 
   tab_node = html_node(node, "table")
 
-  tab_rows = html_nodes(node, "table > tr, table > thead > tr, table > tbody > tr")
+  #tab_rows = html_nodes(node, "table > tr, table > thead > tr, table > tbody > tr")
+  tab_rows = html_nodes(tab_node, "tr, thead > tr, tbody > tr")
 
   cell_df = html_table_cells_from_all_tr(tab_rows)
 

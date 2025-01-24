@@ -80,6 +80,7 @@ restud_parse_html = function(project_dir, html = rvest::read_html(html.file), ht
 
 restud_parse_html_table = function(node, tab_counter) {
   restore.point("restud_parse_html_table")
+  #stop()
   tabname = html_node(node, ".label") %>% html_text2()
   tabid = tabname_to_tabid(tabname)
   tabtitle = html_node(node, ".caption") %>% html_text2()
@@ -89,7 +90,10 @@ restud_parse_html_table = function(node, tab_counter) {
 
   tab_node = html_node(node, "table")
 
-  tab_rows = html_nodes(node, "table > tr, table > thead > tr, table > tbody > tr")
+
+  # The table might be twice there
+  #tab_rows = html_nodes(node, "table > tr, table > thead > tr, table > tbody > tr")
+  tab_rows = html_nodes(tab_node, "tr, thead > tr, tbody > tr")
 
   cell_df = html_table_cells_from_all_tr(tab_rows)
 
