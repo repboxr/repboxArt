@@ -411,14 +411,14 @@ identify_figure_lines_on_page = function(page, line_df, fig_df, opts) {
 
     line_df$type[alines] = "fig"
 
-    notes_se = ExtractSciTab::extract_tab_note_lines(line_df$txt, line_df$trim_txt, max(alines),rev_pline = line_df$rev_pline[max(alines)])
     fig_ind = flines[min(i, length(flines))]
-
-    if (!is.null(notes_se)) {
-      notes_lines = from_to(notes_se[1], notes_se[2])
-      line_df$type[notes_lines] = "fignote"
-      fig_df$fignotes[fig_ind] = combine_text_lines(line_df$trim_txt[notes_lines])
-    }
+    # notes_se = ExtractSciTab::extract_tab_note_lines(line_df$txt, line_df$trim_txt, max(alines),rev_pline = line_df$rev_pline[max(alines)])
+    #
+    # if (!is.null(notes_se)) {
+    #   notes_lines = from_to(notes_se[1], notes_se[2])
+    #   line_df$type[notes_lines] = "fignote"
+    #   fig_df$fignotes[fig_ind] = combine_text_lines(line_df$trim_txt[notes_lines])
+    # }
   }
 
   return(list(line_df=line_df, fig_df=fig_df))

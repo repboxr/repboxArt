@@ -8,7 +8,11 @@ example = function() {
   project_dir = "~/repbox/projects_reg/testart"
   html.file = list.files(file.path(project_dir, "art","html"),glob2rx("jpe_*.html"), full.names = TRUE)[1]
   journ = str.left.of(basename(html.file),"_")
-  html = rvest::read_html(html.file)
+
+  # More robust encoding detection
+  res = guess_encoding_and_read_html(html.file)
+  html=res$doc
+  #html = rvest::read_html(html.file)
 
   res = art_html_to_parts(project_dir, html = html, journ=journ)
   text_df = res$text_df
@@ -21,7 +25,12 @@ art_html_to_parts = function(project_dir) {
   restore.point("art_html_to_parts")
   journ = str.left.of(basename(project_dir),"_")
   html.file = art_get_html_files(project_dir)[1]
-  html = rvest::read_html(html.file)
+
+  # More robust encoding detection
+  res = guess_encoding_and_read_html(html.file)
+  html=res$doc
+
+  #html = rvest::read_html(html.file,encoding = "UTF-8")
 
   if (journ=="jpe" | journ=="jole") {
     res = jpe_parse_html(project_dir, html, html.file, journ)
@@ -374,3 +383,5 @@ show_cell_df_html = function(cell_df, color_by=NULL, temp_dir = "~/repbox/temp")
   browseURL(file)
 
 }
+
+

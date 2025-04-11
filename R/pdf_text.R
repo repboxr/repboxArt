@@ -105,6 +105,8 @@ substitute_wrong_pdf_txt_chars = function(txt) {
   txt = gsub("⫺","-",txt, fixed=TRUE)
   txt = gsub("�","-",txt, fixed=TRUE)
   txt = gsub("â€‹","  ",txt, fixed=TRUE)
+  txt = stri_replace_all_fixed(txt, "…", "fi")
+  txt = stri_replace_all_fixed(txt, "‡", "fl")
   txt
 }
 
